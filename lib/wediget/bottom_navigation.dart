@@ -40,6 +40,16 @@ class _BottomNavigationState extends State<BottomNavigation> {
           right: width / 25,
           left: width / 25,
         ),
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              spreadRadius: 5,
+              blurRadius: 15,
+              offset: Offset(0, 5),
+            ),
+          ],
+        ),
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(10.0),
@@ -92,7 +102,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
                 label: 'Calendar',
               ),
               BottomNavigationBarItem(
-                icon:ImageIcon(
+                icon: ImageIcon(
                   AssetImage('lib/assets/images/law.png'),
                 ),
                 label: 'Law',

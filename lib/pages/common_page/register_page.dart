@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
+import 'package:pasca/wediget/bottom_navigation.dart';
 import 'package:pasca/wediget/snack_bar.dart';
 import 'package:pasca/wediget/normal_button.dart';
 import 'package:pasca/wediget/normal_textfield.dart';
@@ -26,6 +28,9 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController typeController = TextEditingController();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  bool isLoading = false;
+  bool _isObsecure = true;
 
 // create variable and list for user-type drop-down menu
   String? valueChooseType;
@@ -62,6 +67,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    double w = MediaQuery
+        .of(context)
+        .size
+        .width;
     return Scaffold(
       backgroundColor: CustomColors.primaryColor,
       appBar: AppBar(
@@ -89,7 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  'Let\'s create your account',
+                  'Let\'s create an account',
                   style: TextStyle(
                     color: CustomColors.thirdColor,
                     fontSize: 20,
@@ -108,19 +117,19 @@ class _RegisterPageState extends State<RegisterPage> {
                     height: 45,
                     decoration: BoxDecoration(
                       border:
-                          Border.all(color: CustomColors.fourthColor, width: 1),
+                      Border.all(color: CustomColors.fourthColor, width: 1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: DropdownButton(
                       dropdownColor: CustomColors.primaryColor,
-                      icon:const Icon(
+                      icon: const Icon(
                         Icons.arrow_circle_down,
                         color: CustomColors.thirdColor,
                       ),
-                      style:const TextStyle(color: CustomColors.thirdColor),
+                      style: const TextStyle(color: CustomColors.thirdColor),
                       iconSize: 20,
                       isExpanded: true,
-                      underline:const SizedBox(),
+                      underline: const SizedBox(),
                       hint: const Text(
                         'Class',
                         style: TextStyle(
@@ -152,7 +161,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     height: 45,
                     decoration: BoxDecoration(
                       border:
-                          Border.all(color: CustomColors.fourthColor, width: 1),
+                      Border.all(color: CustomColors.fourthColor, width: 1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: DropdownButton(
@@ -258,9 +267,21 @@ class _RegisterPageState extends State<RegisterPage> {
                   Icons.password,
                   color: CustomColors.thirdColor,
                 ),
-                surfixIcon: const Icon(
-                  Icons.visibility_off_sharp,
-                  color: CustomColors.thirdColor,
+                surfixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isObsecure = !_isObsecure;
+                    });
+                  },
+                  icon: _isObsecure
+                      ? const Icon(
+                    Icons.visibility,
+                    color: CustomColors.thirdColor,
+                  )
+                      : const Icon(
+                    Icons.visibility_off,
+                    color: CustomColors.thirdColor,
+                  ),
                 ),
               ),
             ),
@@ -271,14 +292,38 @@ class _RegisterPageState extends State<RegisterPage> {
               back_btn: CustomColors.thirdColor,
               marginSize: 20,
             ),
+            const SizedBox(height: 10),
+            if (isLoading)
+              SpinKitCircle(
+                color: CustomColors.thirdColor,
+                size: w / 8,
+              ),
           ],
         ),
       ),
     );
   }
 
-
   void Register() async {
+    setState(() {
+      isLoading = true; // show loading
+    });
+    // check if user type and class not null and hide loading page
+    if (valueChooseClass == null) {
+      showSnackBar(context, 'Please enter class');
+      setState(() {
+        isLoading = false; // hide loading
+      });
+      return;
+    }
+
+    if (valueChooseType == null) {
+      showSnackBar(context, 'Please enter user-type');
+      setState(() {
+        isLoading = false; // hide loading
+      });
+      return;
+    }
     // create and cast string value
     String email, password, name, grade, type, phone, uid;
 
@@ -289,74 +334,88 @@ class _RegisterPageState extends State<RegisterPage> {
     type = valueChooseType!;
     phone = phoneController.text;
 
-
     if (password != null) {
       try {
-       if(name.isEmpty || email.isEmpty || password.isEmpty || phone.isEmpty || password.isEmpty){
-         showSnackBar(context, 'All filed are required!');
-       }else if(phone.length != 10){
-         showSnackBar(context, 'PhoneNumber must be 10 char');
-       }else if(name.length < 5) {
-         showSnackBar(context, 'Please enter full name');
-       }else {
-         // if all try-catch errors are not found, then register user in to realtime database and auth
+        if (name.isEmpty ||
+            email.isEmpty ||
+            phone.isEmpty ||
+            password.isEmpty) {
+          showSnackBar(context, 'All filed are required!');
+          setState(() {
+            isLoading = false; // hide loading
+          });
+          return;
+        } else if (phone.length != 10) {
+          showSnackBar(context, 'PhoneNumber must be 10 char');
+          setState(() {
+            isLoading = false; // hide loading
+          });
+          return;
+        } else if (name.length < 5) {
+          showSnackBar(context, 'Please insert properly full name');
+          setState(() {
+            isLoading = false; // hide loading
+          });
+          return;
+        } else {
+          // if all try-catch errors are not found, then register user in to realtime database and auth
 
-         // register user in to auth
-         UserCredential userCredential = await _auth
-             .createUserWithEmailAndPassword(email: email, password: password);
-         User? user = FirebaseAuth.instance.currentUser;
-         uid = user!.uid;
+          // register user in to auth
+          UserCredential userCredential = await _auth
+              .createUserWithEmailAndPassword(email: email, password: password);
+          User? user = FirebaseAuth.instance.currentUser;
+          uid = user!.uid;
 
-         // register user in to realtime database
-         DatabaseReference databaseRef = FirebaseDatabase.instance.reference();
 
-         // locate reference point that user node inserted
-         DatabaseReference usersRef = databaseRef.child('users').child(uid);
+          // register user in to realtime database
+          DatabaseReference databaseRef = FirebaseDatabase.instance.reference();
 
-         // Define the data to be inserted
-         Map<String, dynamic> userData = {
-           'name': name,
-           'email': email,
-           'phone': phone,
-           'password': password,
-           'grade': grade,
-           'type': type,
-         };
+          // locate reference point that user node inserted
+          DatabaseReference usersRef = databaseRef.child('users').child(uid);
 
-         // Insert the data at the generated reference
-         usersRef.set(userData).then((_) {
-           showSnackBar(context, 'Welcome! $name');
-           Navigator.pushReplacement(
-             context,
-             MaterialPageRoute(builder: (context) => LoginPage()),
-           );
-         }).catchError((error) {
-           showSnackBar(context, 'Not Inserted');
-         });
+          // Define the data to be inserted
+          Map<String, dynamic> userData = {
+            'name': name,
+            'email': email,
+            'phone': phone,
+            'password': password,
+            'grade': grade,
+            'type': type,
+          };
 
-         // Insert the data at the generated reference
-         usersRef.set(userData).then((_) {
-           showSnackBar(context, 'Inserted');
-         }).catchError((error) {
-           showSnackBar(context, 'Not Inserted');
-         });
-       }
+          // Insert the data at the generated reference
+          usersRef.set(userData).then((_) {
+            // Navigator.pushReplacement(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => BottomNavigation(),
+            //   ),
+            // );
+          }).catchError((error) {
+            showSnackBar(context, 'Not Inserted');
+          });
+        }
       } on FirebaseAuthException catch (e) {
         // checking the validity of user inserted data
         if (e.code == 'weak-password') {
           showSnackBar(context, "Password provided is too weak.");
+          return;
         } else if (e.code == 'email-already-in-use.') {
           showSnackBar(context, 'Account already exists.');
+          return;
         } else if (e.code == 'invalid-email') {
           showSnackBar(context, 'The email address is not valid.');
+          return;
         } else if (e.code == 'network-request-failed') {
           showSnackBar(context,
               'A network error occurred. Please check your internet connection.');
+          return;
         }
+      } finally {
+        setState(() {
+          isLoading = false; // hide loading
+        });
       }
-    } else {
-      // if password or email is null return error message
-      showSnackBar(context, 'All filed are required');
     }
   }
 }

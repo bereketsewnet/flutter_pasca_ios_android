@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pasca/pages/student_page/student_home_page.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:pasca/wediget/bottom_navigation.dart';
 import 'package:pasca/wediget/snack_bar.dart';
 
 import '../../assets/custom_colors/colors.dart';
@@ -22,6 +26,10 @@ TextEditingController _passwordController = TextEditingController();
 //create firebase instance of login method
 final FirebaseAuth _auth = FirebaseAuth.instance;
 String email = '', password = '';
+
+// Declare a variable for showing/hiding the loading spinner
+bool _isLoading = false;
+bool _isObsecure = true;
 
 @override
 void dispose() {
@@ -98,15 +106,27 @@ class _LoginPageState extends State<LoginPage> {
               child: MyTextField(
                 controller: _passwordController,
                 keybordType: TextInputType.visiblePassword,
-                obscureText: true,
+                obscureText: _isObsecure,
                 lableText: 'Password',
                 prifixIcon: const Icon(
                   Icons.password,
                   color: CustomColors.thirdColor,
                 ),
-                surfixIcon: const Icon(
-                  Icons.visibility_off_sharp,
-                  color: CustomColors.thirdColor,
+                surfixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isObsecure = !_isObsecure;
+                    });
+                  },
+                  icon: _isObsecure
+                      ? const Icon(
+                          Icons.visibility,
+                          color: CustomColors.thirdColor,
+                        )
+                      : const Icon(
+                          Icons.visibility_off,
+                          color: CustomColors.thirdColor,
+                        ),
                 ),
               ),
             ),
@@ -117,42 +137,68 @@ class _LoginPageState extends State<LoginPage> {
               back_btn: CustomColors.thirdColor,
               marginSize: w / 3,
             ),
+            const SizedBox(height: 10),
+            // Loading spinner
+            if (_isLoading)
+              SpinKitCircle(
+                color: CustomColors.thirdColor,
+                size: w / 7,
+              ),
           ],
         ));
   }
 
   void LogIn() async {
+    setState(() {
+      _isLoading = true; // Show the loading spinner
+    });
     // assign value to email and password from controllers
     email = _emailController.text;
     password = _passwordController.text;
     //check the validity of email and password if it is null
     if (email.isEmpty || email == null) {
       showSnackBar(context, 'Please enter email');
+      setState(() {
+        _isLoading = false; // hide the loading spinner
+      });
+      return;
     } else if (password.isEmpty || password == null) {
       showSnackBar(context, 'Please enter password');
+      setState(() {
+        _isLoading = false; // hide the loading spinner
+      });
+      return;
     } else {
       try {
         // if all catch errors fix will login to student home page and loin user to firebase auth.
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
+        User? user = FirebaseAuth.instance.currentUser;
+        String uid = user!.uid;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => StudentHomePage(),
+            builder: (context) => BottomNavigation(),
           ),
         );
       } on FirebaseAuthException catch (e) {
-
         if (e.code == 'invalid-credential') {
           // if email not match all to user email it will return user not found
           showSnackBar(context, 'E-mail or password are incorrect');
+          return;
         } else if (e.code == 'invalid-email') {
           // if user insert in valid email it will return invalid email
           showSnackBar(context, 'The email address is not valid.');
+          return;
         } else if (e.code == 'network-request-failed') {
           showSnackBar(context,
               'A network error occurred. Please check your internet connection.');
+          return;
         }
+      } finally {
+        setState(() {
+          _isLoading = false; // hide the loading spinner
+        });
       }
     }
   }

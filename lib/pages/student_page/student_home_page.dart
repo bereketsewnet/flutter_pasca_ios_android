@@ -17,6 +17,8 @@ class StudentHomePage extends StatefulWidget {
 }
 
 class _StudentHomePageState extends State<StudentHomePage> {
+
+  //image slider of profile card list of images
   List imageList = [
     {"id": 1, "image_path": 'lib/assets/images/student_image.jpg'},
     {"id": 2, "image_path": 'lib/assets/images/image2.jpeg'},
@@ -28,6 +30,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
     {"id": 8, "image_path": 'lib/assets/images/image8.jpg'},
     {"id": 9, "image_path": 'lib/assets/images/image9.jpg'},
   ];
+  // List of addition feuther card Container list slider
   final List<Map<String, dynamic>> containerList = [
     {
       'image': 'lib/assets/images/map.jpg',
@@ -35,7 +38,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
       'route': (BuildContext context) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Law()), // Replace with your desired destination page
+          MaterialPageRoute(
+              builder: (context) =>
+                  Law()), // Replace with your desired destination page
         );
       },
     },
@@ -45,7 +50,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
       'route': (BuildContext context) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Law()), // Replace with your desired destination page
+          MaterialPageRoute(
+              builder: (context) =>
+                  Law()), // Replace with your desired destination page
         );
       },
     },
@@ -55,7 +62,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
       'route': (BuildContext context) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Law()), // Replace with your desired destination page
+          MaterialPageRoute(
+              builder: (context) =>
+                  Law()), // Replace with your desired destination page
         );
       },
     },
@@ -68,280 +77,286 @@ class _StudentHomePageState extends State<StudentHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // get all width and height of current screen
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: CustomColors.primaryColor,
       extendBodyBehindAppBar: true,
-      body: Column(
-        children: [
-          // the upper part of the app 1/3 ratio
-          SafeArea(
-            child: SizedBox(
-              width: double.infinity,
-              height: h / 4,
-              child: Stack(
-                children: [
-                  InkWell(
-                    onTap: () {},
-                    child: CarouselSlider(
-                      items: imageList
-                          .map(
-                            (item) => Image.asset(
-                              item['image_path'],
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                            ),
-                          )
-                          .toList(),
-                      carouselController: carouselController,
-                      options: CarouselOptions(
-                          scrollPhysics: const BouncingScrollPhysics(),
-                          autoPlay: true,
-                          aspectRatio: 2,
-                          viewportFraction: 1,
-                          onPageChanged: (index, reason) {
-                            setState(() {
-                              currentIndex = index;
-                            });
-                          }),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // the upper part of the app 1/3 ratio
+            SafeArea(
+              child: SizedBox(
+                width: double.infinity,
+                height: h / 4,
+                child: Stack(
+                  children: [
+                    InkWell(
+                      onTap: () {},
+                      child: CarouselSlider(
+                        items: imageList
+                            .map(
+                              (item) => Image.asset(
+                                item['image_path'],
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
+                            )
+                            .toList(),
+                        carouselController: carouselController,
+                        options: CarouselOptions(
+                            scrollPhysics: const BouncingScrollPhysics(),
+                            autoPlay: true,
+                            aspectRatio: 2,
+                            viewportFraction: 1,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                currentIndex = index;
+                              });
+                            }),
+                      ),
                     ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    top: 120,
-                    left: 0,
-                    right: 0,
-                    child: Row(
+                    Positioned(
+                      bottom: 0,
+                      top: 120,
+                      left: 0,
+                      right: 0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: imageList.asMap().entries.map((entry) {
+                          return GestureDetector(
+                            onTap: () =>
+                                carouselController.animateToPage(entry.key),
+                            child: Container(
+                              width: currentIndex == entry.key ? 17 : 7,
+                              height: 7.0,
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 3.0,
+                              ),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: currentIndex == entry.key
+                                      ? CustomColors.thirdColor
+                                      : CustomColors.primaryColor),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: imageList.asMap().entries.map((entry) {
-                        return GestureDetector(
-                          onTap: () =>
-                              carouselController.animateToPage(entry.key),
-                          child: Container(
-                            width: currentIndex == entry.key ? 17 : 7,
-                            height: 7.0,
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 3.0,
-                            ),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: currentIndex == entry.key
-                                    ? CustomColors.thirdColor
-                                    : CustomColors.primaryColor),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            height: 30,
-                            width: 100,
-                            margin: const EdgeInsets.only(left: 20, top: 30),
-                            color: CustomColors.thirdColor,
-                            child: const Center(
-                              child: Text(
-                                'Welcome',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 14),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              height: 30,
+                              width: 100,
+                              margin: const EdgeInsets.only(left: 20, top: 30),
+                              color: CustomColors.thirdColor,
+                              child: const Center(
+                                child: Text(
+                                  'Welcome',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 14),
+                                ),
                               ),
                             ),
-                          ),
-                          const Expanded(
-                            child: Text(''),
-                          ),
-                          Container(
-                            width: 65,
-                            height: 65,
-                            margin: const EdgeInsets.only(
-                                right: 15, bottom: 5, top: 20),
-                            child: const CircleAvatar(
-                              radius: 50, // Adjust the radius as needed
-                              backgroundImage: AssetImage(
-                                  'lib/assets/images/profile.png'), // Provide the image path
+                            const Expanded(
+                              child: Text(''),
+                            ),
+                            Container(
+                              width: 65,
+                              height: 65,
+                              margin: const EdgeInsets.only(
+                                  right: 15, bottom: 5, top: 20),
+                              child: const CircleAvatar(
+                                radius: 50, // Adjust the radius as needed
+                                backgroundImage: AssetImage(
+                                    'lib/assets/images/profile.png'), // Provide the image path
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 20),
+                          child: const Text(
+                            'Student Full Name',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
                             ),
                           ),
-                        ],
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(left: 20),
-                        child: const Text(
-                          'Student Full Name',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 20),
+                          child: const Text(
+                            'Grade 1A',
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.all(10),
+              height: h / 4.3,
+              decoration: BoxDecoration(
+                color: CustomColors.thirdColor,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    spreadRadius: 5,
+                    blurRadius: 15,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CustomButton(
+                        onPressed: () {},
+                        imagePath: 'lib/assets/images/daily.png',
+                        buttonText: 'Daily',
                       ),
-                      Container(
-                        margin: const EdgeInsets.only(left: 20),
-                        child: const Text(
-                          'Grade 1A',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                      CustomButton(
+                        onPressed: () {},
+                        imagePath: 'lib/assets/images/report.png',
+                        buttonText: 'Report',
+                      ),
+                      CustomButton(
+                        onPressed: () {},
+                        imagePath: 'lib/assets/images/attendance.png',
+                        buttonText: 'Attendance',
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CustomButton(
+                        onPressed: () {},
+                        imagePath: 'lib/assets/images/fees.png',
+                        buttonText: 'Fee-Info',
+                      ),
+                      CustomButton(
+                        onPressed: () {},
+                        imagePath: 'lib/assets/images/id.png',
+                        buttonText: 'Teachers',
+                      ),
+                      CustomButton(
+                        onPressed: () {},
+                        imagePath: 'lib/assets/images/comments.png',
+                        buttonText: 'Comments',
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.all(10),
-            height: h / 4.3,
-            decoration: BoxDecoration(
-              color: CustomColors.thirdColor,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.4),
-                  spreadRadius: 15,
-                  blurRadius: 15,
-                  offset: Offset(0, 5),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            SizedBox(height: h / 150),
+            SizedBox(
+              width: double.infinity,
+              height: h / 3.4,
+              child: Center(
+                child: Stack(
                   children: [
-                    CustomButton(
-                      onPressed: () {},
-                      imagePath: 'lib/assets/images/daily.png',
-                      buttonText: 'Daily',
-                    ),
-                    CustomButton(
-                      onPressed: () {},
-                      imagePath: 'lib/assets/images/report.png',
-                      buttonText: 'Report',
-                    ),
-                    CustomButton(
-                      onPressed: () {},
-                      imagePath: 'lib/assets/images/attendance.png',
-                      buttonText: 'Attendance',
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    CustomButton(
-                      onPressed: () {},
-                      imagePath: 'lib/assets/images/fees.png',
-                      buttonText: 'Fee-Info',
-                    ),
-                    CustomButton(
-                      onPressed: () {},
-                      imagePath: 'lib/assets/images/id.png',
-                      buttonText: 'Teachers',
-                    ),
-                    CustomButton(
-                      onPressed: () {},
-                      imagePath: 'lib/assets/images/comments.png',
-                      buttonText: 'Comments',
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: h / 150),
-          SizedBox(
-            width: double.infinity,
-            height: h / 3.4,
-            child: Center(
-              child: Stack(
-                children: [
-                  InkWell(
-                    onTap: () {},
-                    child: CarouselSlider(
-                      items: containerList.map((item) {
-                        return Builder(
-                          builder: (BuildContext context) {
-                            return Container(
-                              width: MediaQuery.of(context).size.width,
-                              margin: EdgeInsets.symmetric(horizontal: 10.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: CustomColors.secondaryColor,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Text(
-                                          item['text'],
-                                          style: const TextStyle(
-                                            color: CustomColors.fourthColor,
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
+                    InkWell(
+                      onTap: () {},
+                      child: CarouselSlider(
+                        items: containerList.map((item) {
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 10.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: CustomColors.secondaryColor,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          Text(
+                                            item['text'],
+                                            style: const TextStyle(
+                                              color: CustomColors.fourthColor,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        MyButton(
-                                          onTap: () {
-                                            item['route'](context); // Call the route function with the context parameter
-                                          },
-                                          btn_txt: 'Explore',
-                                          marginSize: 10,
-                                          paddingSize: EdgeInsets.all(5),
-                                          back_btn: CustomColors.thirdColor,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 100,
-                                    height: double.infinity,
-                                    child: ClipRRect(
-                                      borderRadius: const BorderRadius.only(
-                                          topRight: Radius.circular(10.0),
-                                          bottomRight: Radius.circular(10.0)),
-                                      child: Image.asset(
-                                        item['image'],
-                                        fit: BoxFit.cover,
+                                          MyButton(
+                                            onTap: () {
+                                              item['route'](
+                                                  context); // Call the route function with the context parameter
+                                            },
+                                            btn_txt: 'Explore',
+                                            marginSize: 10,
+                                            paddingSize: EdgeInsets.all(5),
+                                            back_btn: CustomColors.thirdColor,
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      }).toList(),
-                      carouselController: carouselControllerLowerSlider,
-                      options: CarouselOptions(
-                          reverse: true,
-                          scrollPhysics: const BouncingScrollPhysics(),
-                          autoPlay: true,
-                          aspectRatio: 2,
-                          viewportFraction: 0.7,
-                          height: 130,
-                          pauseAutoPlayOnTouch: false,
-                          onPageChanged: (index, reason) {
-                            setState(() {
-                              currentIndexLowerSlider = index;
-                            });
-                          }),
+                                    SizedBox(
+                                      width: 100,
+                                      height: double.infinity,
+                                      child: ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                            topRight: Radius.circular(10.0),
+                                            bottomRight: Radius.circular(10.0)),
+                                        child: Image.asset(
+                                          item['image'],
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        }).toList(),
+                        carouselController: carouselControllerLowerSlider,
+                        options: CarouselOptions(
+                            reverse: true,
+                            scrollPhysics: const BouncingScrollPhysics(),
+                            autoPlay: true,
+                            aspectRatio: 2,
+                            viewportFraction: 0.7,
+                            height: 130,
+                            pauseAutoPlayOnTouch: true,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                currentIndexLowerSlider = index;
+                              });
+                            }),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

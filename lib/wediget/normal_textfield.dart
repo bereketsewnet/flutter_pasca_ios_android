@@ -7,7 +7,7 @@ class MyTextField extends StatelessWidget {
   final String? lableText;
   final bool obscureText;
   final Icon? prifixIcon;
-  final Icon? surfixIcon;
+  final IconButton? surfixIcon;
   final TextInputType? keybordType;
   final FormFieldValidator? validator;
 
