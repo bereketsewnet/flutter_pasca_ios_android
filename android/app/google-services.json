@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "824091918512",
+    "project_id": "pasca-ios-and-android-dc988",
+    "storage_bucket": "pasca-ios-and-android-dc988.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:824091918512:android:cff2cd79d8e0ac98267b75",
+        "android_client_info": {
+          "package_name": "com.example.pasca"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNrlzSWnwRenT89arxDEqv4bhNf-Le3JA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
