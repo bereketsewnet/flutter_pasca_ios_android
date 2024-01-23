@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:pasca/pages/student_page/law.dart';
 import 'package:pasca/wediget/bottom_navigation.dart';
 import 'package:pasca/wediget/snack_bar.dart';
 
@@ -13,6 +14,7 @@ import '../../assets/custom_colors/colors.dart';
 import '../../methods/my_methods/shared_pref_method.dart';
 import '../../wediget/normal_button.dart';
 import '../../wediget/normal_textfield.dart';
+import '../student_page/calendar.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -225,14 +227,39 @@ class _LoginPageState extends State<LoginPage> {
             grade: userData['grade'],
             type: userData['type'],
             phone: userData['phone'],
+            uid: userData['uid'],
           );
-          showSnackBar(context, 'Saved');
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => BottomNavigation(),
-            ),
-          );
+          // go to Home page
+          if(userData['type'] == 'Student'){
+            // user type == student go to Student page
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const BottomNavigation(),
+              ),
+            );
+            return;
+          } else if(userData['type'] == 'Administration'){
+            // user type == admin go to administration page
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const BottomNavigation(),
+              ),
+            );
+            return;
+          }else {
+            // user type == teacher or homeroom go to teachers page
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const BottomNavigation(),
+              ),
+            );
+            return;
+          }
+
+
         }
       }, onError: (error) {
         showSnackBar(context, error.toString());

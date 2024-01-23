@@ -7,7 +7,8 @@ class SharedPref {
       required String name,
       required String grade,
       required String type,
-      required String phone}) async {
+      required String phone,
+      required String uid}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('name', name);
     await prefs.setString('email', email);
@@ -15,6 +16,7 @@ class SharedPref {
     await prefs.setString('phone', phone);
     await prefs.setString('grade', grade);
     await prefs.setString('type', type);
+    await prefs.setString('uid', uid);
   }
 
   Future<String?> getEmail() async {
@@ -45,5 +47,10 @@ class SharedPref {
   Future<String?> getType() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('type') ?? '';
+  }
+
+  Future<String?> getUid() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('uid') ?? '';
   }
 }

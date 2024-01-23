@@ -34,7 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
 // create variable and list for user-type drop-down menu
   String? valueChooseType;
-  List listItemType = ['Student', 'Teacher', 'HomeRoom Teacher', 'Admin'];
+  List listItemType = ['Student', 'Teacher', 'HomeRoom Teacher', 'Administration'];
 
   // create variable and list for class drop-down menu
   String? valueChooseClass;
@@ -261,7 +261,7 @@ class _RegisterPageState extends State<RegisterPage> {
               child: MyTextField(
                 controller: passwordController,
                 keybordType: TextInputType.visiblePassword,
-                obscureText: true,
+                obscureText: _isObsecure,
                 lableText: 'Password',
                 prifixIcon: const Icon(
                   Icons.password,
@@ -381,16 +381,18 @@ class _RegisterPageState extends State<RegisterPage> {
             'password': password,
             'grade': grade,
             'type': type,
+            'uid': uid,
           };
 
           // Insert the data at the generated reference
           usersRef.set(userData).then((_) {
-            // Navigator.pushReplacement(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => BottomNavigation(),
-            //   ),
-            // );
+           // after registration clean all
+            nameController.text = '';
+            emailController.text = '';
+            phoneController.text = '';
+            phoneController.text = '';
+            passwordController.text = '';
+            showSnackBar(context, 'Success');
           }).catchError((error) {
             showSnackBar(context, 'Not Inserted');
           });

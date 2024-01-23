@@ -25,6 +25,21 @@ class StudentHomePage extends StatefulWidget {
 }
 
 class _StudentHomePageState extends State<StudentHomePage> {
+  String name = '';
+  String grade = '';
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      fetchData();
+    });
+  }
+
+  void fetchData() async {
+    name = await SharedPref().getName() ?? '';
+    grade = await SharedPref().getGrade() ?? '';
+    // Once the values are retrieved, you can update your UI or perform any other actions
+  }
   //image slider of profile card list of images
   List imageList = [
     {"id": 1, "image_path": 'lib/assets/images/student_image.jpg'},
@@ -191,7 +206,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                         Container(
                           margin: const EdgeInsets.only(left: 20),
                           child: Text(
-                            'widget.name',
+                            name,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 22,
@@ -202,7 +217,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                         Container(
                           margin: const EdgeInsets.only(left: 20),
                           child: Text(
-                            'widget.grade',
+                            grade,
                             style: const TextStyle(color: Colors.white),
                           ),
                         ),
