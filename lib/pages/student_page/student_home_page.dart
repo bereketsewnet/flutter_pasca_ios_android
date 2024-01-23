@@ -1,15 +1,23 @@
+import 'dart:async';
+
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
+import 'package:pasca/methods/my_methods/shared_pref_method.dart';
 import 'package:pasca/pages/student_page/law.dart';
 import 'package:pasca/wediget/custom_button.dart';
 import 'dart:math' as math;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 import 'package:pasca/wediget/normal_button.dart';
 
+import '../../wediget/snack_bar.dart';
+
 class StudentHomePage extends StatefulWidget {
+
   const StudentHomePage({Key? key}) : super(key: key);
 
   @override
@@ -17,7 +25,6 @@ class StudentHomePage extends StatefulWidget {
 }
 
 class _StudentHomePageState extends State<StudentHomePage> {
-
   //image slider of profile card list of images
   List imageList = [
     {"id": 1, "image_path": 'lib/assets/images/student_image.jpg'},
@@ -30,6 +37,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
     {"id": 8, "image_path": 'lib/assets/images/image8.jpg'},
     {"id": 9, "image_path": 'lib/assets/images/image9.jpg'},
   ];
+
   // List of addition feuther card Container list slider
   final List<Map<String, dynamic>> containerList = [
     {
@@ -182,9 +190,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
                         ),
                         Container(
                           margin: const EdgeInsets.only(left: 20),
-                          child: const Text(
-                            'Student Full Name',
-                            style: TextStyle(
+                          child: Text(
+                            'widget.name',
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 22,
                               fontWeight: FontWeight.w900,
@@ -193,9 +201,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
                         ),
                         Container(
                           margin: const EdgeInsets.only(left: 20),
-                          child: const Text(
-                            'Grade 1A',
-                            style: TextStyle(color: Colors.white),
+                          child: Text(
+                            'widget.grade',
+                            style: const TextStyle(color: Colors.white),
                           ),
                         ),
                       ],
@@ -280,8 +288,8 @@ class _StudentHomePageState extends State<StudentHomePage> {
                             builder: (BuildContext context) {
                               return Container(
                                 width: MediaQuery.of(context).size.width,
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 10.0),
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   color: CustomColors.secondaryColor,
@@ -360,29 +368,6 @@ class _StudentHomePageState extends State<StudentHomePage> {
       ),
     );
   }
-}
 
-// Column(
-// mainAxisAlignment: MainAxisAlignment.center,
-// children: [
-// Image.asset(
-// item['image'],
-// height: 100,
-// ),
-// SizedBox(height: 6.0),
-// Text(
-// item['text'],
-// style: TextStyle(
-// fontSize: 20,
-// fontWeight: FontWeight.bold,
-// ),
-// ),
-// // SizedBox(height: 1),
-// // ElevatedButton(
-// //   onPressed: () {
-// //     //Navigator.pushNamed(context, item['route']);
-// //   },
-// //   child: Text('Go to ${item['text']}'),
-// // ),
-// ],
-// ),
+  void getUserInfo() {}
+}

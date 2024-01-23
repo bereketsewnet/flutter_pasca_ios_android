@@ -10,6 +10,7 @@ import 'package:pasca/wediget/bottom_navigation.dart';
 import 'package:pasca/wediget/snack_bar.dart';
 
 import '../../assets/custom_colors/colors.dart';
+import '../../methods/my_methods/shared_pref_method.dart';
 import '../../wediget/normal_button.dart';
 import '../../wediget/normal_textfield.dart';
 
@@ -132,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 15),
             MyButton(
-              onTap: LogIn,
+              onTap: signIn,
               btn_txt: 'LogIn',
               back_btn: CustomColors.thirdColor,
               marginSize: w / 3,
@@ -148,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
         ));
   }
 
-  void LogIn() async {
+  void signIn() async {
     setState(() {
       _isLoading = true; // Show the loading spinner
     });
@@ -173,14 +174,8 @@ class _LoginPageState extends State<LoginPage> {
         // if all catch errors fix will login to student home page and loin user to firebase auth.
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
-        User? user = FirebaseAuth.instance.currentUser;
-        String uid = user!.uid;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BottomNavigation(),
-          ),
-        );
+        getUserDetails(context);
+
       } on FirebaseAuthException catch (e) {
         if (e.code == 'invalid-credential') {
           // if email not match all to user email it will return user not found
@@ -200,6 +195,50 @@ class _LoginPageState extends State<LoginPage> {
           _isLoading = false; // hide the loading spinner
         });
       }
+    }
+  }
+  void getUserDetails(BuildContext context){
+    // get user uid from firebase auth
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String uid = user.uid;
+      DatabaseReference userRef =
+      FirebaseDatabase.instance.reference().child('users').child(uid);
+      // retrieve data from user node uid child and store in to map
+      userRef.onValue.listen((event) async {
+        DataSnapshot snapshot = event.snapshot;
+        if (snapshot.value != null) {
+          Map<dynamic, dynamic> userData = Map<dynamic, dynamic>.from(
+              snapshot.value as Map<dynamic, dynamic>);
+
+
+          // if you want to get value in string you can use this
+          //String name = userData['name'];
+
+
+          // saving user data to shared prefenace
+          SharedPref sharedPref = SharedPref();
+          sharedPref.saveUserData(
+            email: userData['email'],
+            password: userData['password'],
+            name: userData['name'],
+            grade: userData['grade'],
+            type: userData['type'],
+            phone: userData['phone'],
+          );
+          showSnackBar(context, 'Saved');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BottomNavigation(),
+            ),
+          );
+        }
+      }, onError: (error) {
+        showSnackBar(context, error.toString());
+      });
+    } else {
+      showSnackBar(context, 'No user found');
     }
   }
 }
