@@ -8,9 +8,7 @@ import 'package:pasca/assets/custom_colors/colors.dart';
 import 'package:pasca/methods/my_methods/shared_pref_method.dart';
 import 'package:pasca/pages/student_page/law.dart';
 import 'package:pasca/wediget/custom_button.dart';
-import 'dart:math' as math;
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
+
 
 import 'package:pasca/wediget/normal_button.dart';
 
@@ -57,7 +55,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
   final List<Map<String, dynamic>> containerList = [
     {
       'image': 'lib/assets/images/map.jpg',
-      'text': 'Map',
+      'text': 'School Map',
       'route': (BuildContext context) {
         Navigator.push(
           context,
@@ -68,8 +66,8 @@ class _StudentHomePageState extends State<StudentHomePage> {
       },
     },
     {
-      'image': 'lib/assets/images/advert.jpg',
-      'text': 'Advert',
+      'image': 'lib/assets/images/advert2.jpg',
+      'text': 'School Info',
       'route': (BuildContext context) {
         Navigator.push(
           context,
@@ -366,6 +364,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                             aspectRatio: 2,
                             viewportFraction: 0.7,
                             height: 130,
+                            initialPage: 2,
                             pauseAutoPlayOnTouch: true,
                             onPageChanged: (index, reason) {
                               setState(() {
