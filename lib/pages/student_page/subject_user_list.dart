@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
 import 'package:pasca/wediget/user_list_view.dart';
 
+import '../../wediget/floting_action_buttom.dart';
 import '../../wediget/user_chat_list_view.dart';
 
 class SubjectUserList extends StatelessWidget {
@@ -25,6 +26,13 @@ class SubjectUserList extends StatelessWidget {
             Map users = snapshot.value as Map;
             return UsersListView(users: users);
           },
+        ),
+      ),
+      floatingActionButton: FlotingButtom(
+        color: CustomColors.secondaryColor,
+        icon: Icon(
+          Icons.edit,
+          color: CustomColors.thirdColor,
         ),
       ),
     );

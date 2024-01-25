@@ -1,15 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:pasca/assets/custom_colors/colors.dart';
-import 'package:pasca/code_test.dart';
-import 'package:pasca/pages/common_page/login_page.dart';
-import 'package:pasca/pages/common_page/register_page.dart';
-import 'package:pasca/pages/student_page/student_home_page.dart';
-import 'package:pasca/pages/student_page/subject_user_list.dart';
-import 'package:pasca/second_code_test.dart';
-import 'package:pasca/third_code_test.dart';
-import 'package:pasca/wediget/bottom_navigation.dart';
-import 'package:pasca/wediget/upper_tab_bar.dart';
+import 'package:pasca/pages/student_page/chat_room.dart';
+
 
 import 'methods/firebase_service/firebase_options.dart';
 void main() async {
@@ -29,7 +21,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
       ),
-      home: BottomNavigation(),
+      home: ChatRoom(),
     );
   }
 }

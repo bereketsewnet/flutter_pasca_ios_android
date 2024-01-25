@@ -238,7 +238,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                     color: Colors.black.withOpacity(0.3),
                     spreadRadius: 5,
                     blurRadius: 15,
-                    offset: Offset(0, 5),
+                    offset: const Offset(0, 5),
                   ),
                 ],
               ),
