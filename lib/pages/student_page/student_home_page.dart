@@ -7,15 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
 import 'package:pasca/methods/my_methods/shared_pref_method.dart';
 import 'package:pasca/pages/student_page/law.dart';
+import 'package:pasca/pages/student_page/subject_user_list.dart';
 import 'package:pasca/wediget/custom_button.dart';
 
-
 import 'package:pasca/wediget/normal_button.dart';
+import 'package:pasca/wediget/upper_tab_bar.dart';
 
 import '../../wediget/snack_bar.dart';
 
 class StudentHomePage extends StatefulWidget {
-
   const StudentHomePage({Key? key}) : super(key: key);
 
   @override
@@ -25,6 +25,7 @@ class StudentHomePage extends StatefulWidget {
 class _StudentHomePageState extends State<StudentHomePage> {
   String name = '';
   String grade = '';
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +39,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
     grade = await SharedPref().getGrade() ?? '';
     // Once the values are retrieved, you can update your UI or perform any other actions
   }
+
   //image slider of profile card list of images
   List imageList = [
     {"id": 1, "image_path": 'lib/assets/images/student_image.jpg'},
@@ -247,7 +249,14 @@ class _StudentHomePageState extends State<StudentHomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       CustomButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UpperTabBar(),
+                            ),
+                          );
+                        },
                         imagePath: 'lib/assets/images/daily.png',
                         buttonText: 'Daily',
                       ),

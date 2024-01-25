@@ -15,32 +15,9 @@ class SubjectUserList extends StatelessWidget {
     final Query _dbRef = FirebaseDatabase.instance.ref().child('users');
     return Scaffold(
       backgroundColor: CustomColors.primaryColor,
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: CustomColors.thirdColor,
-          ),
-        ),
-        title: const Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage('https://www.catholicsingles.com/wp-content/uploads/2020/06/blog-header-3.png'),
-              radius: 20,
-            ),
-            SizedBox(width: 10),
-            Text(
-              'BereketSewnet',
-              style: TextStyle(color: CustomColors.thirdColor),
-            ),
-          ],
-        ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
       body: Container(
         width: double.infinity,
+        margin: EdgeInsets.only(top: 10),
         child: FirebaseAnimatedList(
           query: _dbRef,
           itemBuilder: (BuildContext context, DataSnapshot snapshot,

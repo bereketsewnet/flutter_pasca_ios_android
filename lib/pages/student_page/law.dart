@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pasca/assets/custom_colors/colors.dart';
 
 class Law extends StatelessWidget {
   const Law({Key? key}) : super(key: key);
@@ -7,12 +8,15 @@ class Law extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Hello'),
-      ),
-      body: const Text(
-        'Law',
-        style: TextStyle(color: Colors.black),
+      backgroundColor: CustomColors.primaryColor,
+      body: Center(
+        child: Text(
+          'Law',
+          style: TextStyle(
+            color: CustomColors.thirdColor,
+            fontSize: 20,
+          ),
+        ),
       ),
     );
   }

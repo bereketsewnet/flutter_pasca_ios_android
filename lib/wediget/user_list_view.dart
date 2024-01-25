@@ -34,6 +34,7 @@ class UsersListView extends StatelessWidget {
               users['imageUrl'] ??
                   'https://www.catholicsingles.com/wp-content/uploads/2020/06/blog-header-3.png',
             ),
+            backgroundColor: CustomColors.thirdColor,
             radius: 30,
           ),
           title: Text(
