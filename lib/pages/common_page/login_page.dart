@@ -239,7 +239,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
             return;
-          } else if(userData['type'] == 'Administration'){
+          } else if(userData['type'] == 'Admin'){
             // user type == admin go to administration page
             Navigator.pushReplacement(
               context,

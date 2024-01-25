@@ -34,7 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
 // create variable and list for user-type drop-down menu
   String? valueChooseType;
-  List listItemType = ['Student', 'Teacher', 'HomeRoom Teacher', 'Administration'];
+  List listItemType = ['Student', 'Teacher', 'HomeRoom', 'Admin'];
 
   // create variable and list for class drop-down menu
   String? valueChooseClass;

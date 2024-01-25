@@ -1,52 +1,64 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pasca/assets/custom_colors/colors.dart';
 
 class UsersListView extends StatelessWidget {
-  String? imageUrl;
-  String? name;
-  String? message;
-  String? timeStamp;
+  UsersListView({
+    super.key,
+    required this.users,
+  });
 
-  UsersListView(this.imageUrl, this.name, this.message, this.timeStamp,
-      {super.key});
+  Map users;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Column(
-        children: [
-          ListTile(
-            leading: CircleAvatar(
-              child: Image.asset(imageUrl ?? 'lib/assets/images/profile.png'),
-              radius: 25,
-            ),
-            title: Text(
-              name ?? 'FullName',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-            subtitle: Row(
-              children: [
-                const Icon(Icons.done_all),
-                const SizedBox(width: 3),
-                Text(
-                  message ?? 'Last Message',
-                  style: const TextStyle(
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-            trailing: Text(timeStamp ?? 'recently'),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(left: 80, right: 20),
-            child: Divider(thickness: 1),
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+      decoration: BoxDecoration(
+        color: CustomColors.thirdColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            spreadRadius: 5,
+            blurRadius: 15,
+            offset: Offset(0, 5),
           ),
         ],
+      ),
+      child: InkWell(
+        onTap: () {},
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(
+              users['imageUrl'] ??
+                  'https://www.catholicsingles.com/wp-content/uploads/2020/06/blog-header-3.png',
+            ),
+            radius: 30,
+          ),
+          title: Text(
+            users['name'] ?? 'FullName',
+            style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: CustomColors.primaryColor),
+          ),
+          subtitle: Row(
+            children: [
+              const SizedBox(width: 3),
+              Text(
+                users['type'],
+                style: TextStyle(
+                  color: CustomColors.secondaryColor,
+                ),
+              ),
+            ],
+          ),
+          trailing: Text(
+            users['grade'] ?? 'Grade',
+            style: TextStyle(color: CustomColors.secondaryColor),
+          ),
+        ),
       ),
     );
   }
