@@ -40,7 +40,7 @@ class _ChatRoomState extends State<ChatRoom> {
 
   void fetchData() async {
     String _uid = await SharedPref().getUid() ?? '';
-    // Once the values are retrieved, you can update your UI or perform any other actions
+    // getting my id
     setState(() {
       uid = _uid;
 
@@ -50,19 +50,6 @@ class _ChatRoomState extends State<ChatRoom> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    final List<ChatMessage> chatMessages = [
-      ChatMessage(
-        text: 'Hello',
-        sender: 'Me',
-        timestamp: DateTime.now(),
-      ),
-      ChatMessage(
-        text: 'Hi there!',
-        sender: 'Friend',
-        timestamp: DateTime.now().add(Duration(minutes: 5)),
-      ),
-      // Add more chat messages here
-    ];
     return Scaffold(
       backgroundColor: CustomColors.primaryColor,
       appBar: AppBar(
@@ -103,8 +90,9 @@ class _ChatRoomState extends State<ChatRoom> {
                 itemBuilder: (BuildContext context, DataSnapshot snapshot,
                     Animation<double> animation, int index) {
                   Map users = snapshot.value as Map;
+                  // check message sender to my id b/c to put on the right side ot message
                   final bool isMe = users['sender'] == uid;
-                  
+                  // check if message send by me or receive by me b/c in chat room display on my massage and friend message
                   if(users['sender'] == uid && users['receiver'] == widget.friendId || users['sender'] == widget.friendId && users['receiver'] == uid){
                     return Align(
                       alignment:
@@ -126,6 +114,7 @@ class _ChatRoomState extends State<ChatRoom> {
                       ),
                     );
                   }
+                  // if no message send me and myfriend it will return null container
                   return Container();
                 },
               ),
@@ -215,6 +204,7 @@ class _ChatRoomState extends State<ChatRoom> {
   }
 
   void sendMessage() async {
+    // geting all nessasry info for send message e.g uid, friendId, message,date,database e.t.c .....
     User? user = FirebaseAuth.instance.currentUser;
     String uid = user!.uid;
     String friendId = widget.friendId;
@@ -232,7 +222,7 @@ class _ChatRoomState extends State<ChatRoom> {
         .child(friendId);
 
     if (message.isNotEmpty && message != ' ' && message != '  ') {
-      // chat info map
+      // chat info map or object
       Map<String, dynamic> chatData = {
         'message': message,
         'sender': myId,

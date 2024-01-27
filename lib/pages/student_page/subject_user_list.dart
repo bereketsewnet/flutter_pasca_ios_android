@@ -26,8 +26,8 @@ class _SubjectUserListState extends State<SubjectUserList> {
   }
 
   void fetchData() async {
+    //geting my uId
     String _uid = await SharedPref().getUid() ?? '';
-    // Once the values are retrieved, you can update your UI or perform any other actions
     setState(() {
       uid = _uid;
 
@@ -47,6 +47,7 @@ class _SubjectUserListState extends State<SubjectUserList> {
           itemBuilder: (BuildContext context, DataSnapshot snapshot,
               Animation<double> animation, int index) {
             Map users = snapshot.value as Map;
+            // check if the user is equal to my id not display b/c i not chat my self and will return null container
             if(users['uid'] != uid){
               return UsersListView(users: users);
             }
