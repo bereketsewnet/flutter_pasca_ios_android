@@ -269,14 +269,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                         buttonText: 'Daily',
                       ),
                       CustomButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatRoomTest(friendId: '1', profileImage: 'profileImage', friendName: 'friendName'),
-                            ),
-                          );
-                        },
+                        onPressed: () {},
                         imagePath: 'lib/assets/images/report.png',
                         buttonText: 'Report',
                       ),
