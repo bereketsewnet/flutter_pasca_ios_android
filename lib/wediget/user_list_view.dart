@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
+import 'package:pasca/pages/student_page/chat_room.dart';
 
 class UsersListView extends StatelessWidget {
   UsersListView({
@@ -27,11 +28,22 @@ class UsersListView extends StatelessWidget {
         ],
       ),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatRoom(
+                friendName: users['name'],
+                profileImage: users['profilePic'],
+                friendId: users['uid'],
+              ),
+            ),
+          );
+        },
         child: ListTile(
           leading: CircleAvatar(
             backgroundImage: NetworkImage(
-              users['imageUrl'] ??
+              users['profilePic'] ??
                   'https://www.catholicsingles.com/wp-content/uploads/2020/06/blog-header-3.png',
             ),
             backgroundColor: CustomColors.thirdColor,

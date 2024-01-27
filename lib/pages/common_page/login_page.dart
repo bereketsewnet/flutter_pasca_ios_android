@@ -228,6 +228,7 @@ class _LoginPageState extends State<LoginPage> {
             type: userData['type'],
             phone: userData['phone'],
             uid: userData['uid'],
+            profilePic: userData['profilePic']
           );
           // go to Home page
           if(userData['type'] == 'Student'){

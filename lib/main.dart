@@ -1,6 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:pasca/code_test.dart';
+import 'package:pasca/pages/common_page/login_page.dart';
+import 'package:pasca/pages/common_page/register_page.dart';
 import 'package:pasca/pages/student_page/chat_room.dart';
+import 'package:pasca/pages/student_page/subject_user_list.dart';
 
 
 import 'methods/firebase_service/firebase_options.dart';
@@ -21,7 +25,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
       ),
-      home: ChatRoom(),
+      home: LoginPage(),
     );
   }
 }

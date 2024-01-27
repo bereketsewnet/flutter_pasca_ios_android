@@ -1,16 +1,35 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
+import 'package:pasca/methods/my_methods/shared_pref_method.dart';
 import 'package:pasca/wediget/chat_messages_list.dart';
+import 'package:pasca/wediget/snack_bar.dart';
 
 import '../../second_code_test.dart';
 
-class ChatRoom extends StatelessWidget {
-  const ChatRoom({Key? key}) : super(key: key);
+class ChatRoom extends StatefulWidget {
+  String friendId;
+  String profileImage;
+  String friendName;
 
+  ChatRoom({
+    required this.friendId,
+    required this.profileImage,
+    required this.friendName,
+  });
+
+  @override
+  State<ChatRoom> createState() => _ChatRoomState();
+}
+
+class _ChatRoomState extends State<ChatRoom> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    TextEditingController _messageController = TextEditingController();
     final List<ChatMessage> chatMessages = [
       ChatMessage(
         text: 'Hello',
@@ -23,58 +42,31 @@ class ChatRoom extends StatelessWidget {
         timestamp: DateTime.now().add(Duration(minutes: 5)),
       ),
       // Add more chat messages here
-      ChatMessage(
-        text:
-            'wow the design is very beautiful. this is your work, Tnx very much',
-        sender: 'Friend',
-        timestamp: DateTime.now(),
-      ),
-      ChatMessage(
-        text: 'Hello my name is bereket sewnet',
-        sender: 'Friend',
-        timestamp: DateTime.now(),
-      ),
-      ChatMessage(
-        text:
-            'Hello, My name is Betelhem sewnet',
-        sender: 'Me',
-        timestamp: DateTime.now().add(const Duration(minutes: 5)),
-      ),
-      ChatMessage(
-        text:
-            'Ok, I\'am testing my chat app',
-        sender: 'Me',
-        timestamp: DateTime.now().add(const Duration(minutes: 5)),
-      ),
-      ChatMessage(
-        text:
-        'Nice that\'s sounds grate',
-        sender: 'Friend',
-        timestamp: DateTime.now(),
-      )
     ];
     return Scaffold(
       backgroundColor: CustomColors.primaryColor,
       appBar: AppBar(
         backgroundColor: CustomColors.secondaryColor,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
           icon: const Icon(
             Icons.arrow_back,
             color: CustomColors.thirdColor,
           ),
         ),
-        title: const Row(
+        title: Row(
           children: [
-            CircleAvatar(
-              backgroundImage: AssetImage('lib/assets/images/profile.png'),
+             CircleAvatar(
+              backgroundImage: NetworkImage(widget.profileImage),
             ),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             Text(
-              'Bereket Sewnet',
-              style: TextStyle(
+              widget.friendName,
+              style: const TextStyle(
                 color: CustomColors.thirdColor,
               ),
             ),
@@ -142,6 +134,7 @@ class ChatRoom extends StatelessWidget {
                     ],
                   ),
                   child: TextField(
+                    controller: _messageController,
                     style: const TextStyle(
                       color: CustomColors.fourthColor,
                     ),
@@ -165,7 +158,7 @@ class ChatRoom extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(bottom: 20),
+                  margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
@@ -177,7 +170,7 @@ class ChatRoom extends StatelessWidget {
                     ],
                   ),
                   child: InkWell(
-                    onTap: () {},
+                    onTap: sendMessage,
                     child: const CircleAvatar(
                       backgroundColor: CustomColors.thirdColor,
                       radius: 25,
@@ -195,17 +188,17 @@ class ChatRoom extends StatelessWidget {
       ),
     );
   }
+
+  void sendMessage() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    String uid = user!.uid;
+    String friendId = widget.friendId;
+    String myId = await SharedPref().getUid() ?? uid;
+    DatabaseReference dbRefChat =
+        FirebaseDatabase.instance.ref().child('Chats');
+    DatabaseReference dbRefChatList =
+        FirebaseDatabase.instance.ref().child(myId).child(friendId);
+    showSnackBar(context, myId);
+    showSnackBar(context, friendId);
+  }
 }
-// Container(
-// width: 200,
-// child: Card(
-// margin:
-// EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-// child: ListTile(
-// title: Text(message.text),
-// subtitle: Text(
-// '${message.sender} • ${message.timestamp}',
-// ),
-// ),
-// ),
-// ),

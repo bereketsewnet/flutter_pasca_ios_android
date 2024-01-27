@@ -1,14 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
+import 'package:pasca/methods/my_methods/shared_pref_method.dart';
 import 'package:pasca/pages/student_page/law.dart';
 import 'package:pasca/pages/student_page/subject_user_list.dart';
 import 'package:pasca/wediget/user_list_view.dart';
 
-class UpperTabBar extends StatelessWidget {
+class UpperTabBar extends StatefulWidget {
+  @override
+  State<UpperTabBar> createState() => _UpperTabBarState();
+}
+
+class _UpperTabBarState extends State<UpperTabBar> {
   final List<Tab> myTabs = <Tab>[
     const Tab(text: 'Private'),
     const Tab(text: 'Public'),
   ];
+
+  String name = '';
+  String grade = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  void fetchData() async {
+    String fetchedName = await SharedPref().getName() ?? '';
+    String fetchedGrade = await SharedPref().getGrade() ?? '';
+
+    setState(() {
+      name = fetchedName;
+      grade = fetchedGrade;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,15 +60,15 @@ class UpperTabBar extends StatelessWidget {
               ),
               Container(
                 margin: EdgeInsets.only(left: 10),
-                child: const Column(
+                child:  Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'BereketSewnet',
+                      name,
                       style: TextStyle(color: CustomColors.thirdColor, fontSize: 18),
                     ),
                     Text(
-                      'Class: 1B',
+                      'Class: $grade',
                       style: TextStyle(color: CustomColors.thirdColor, fontSize: 14),
                     ),
                   ],

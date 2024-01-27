@@ -25,19 +25,25 @@ class StudentHomePage extends StatefulWidget {
 class _StudentHomePageState extends State<StudentHomePage> {
   String name = '';
   String grade = '';
+  String profilePic = '';
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      fetchData();
-    });
+    fetchData();
   }
 
   void fetchData() async {
-    name = await SharedPref().getName() ?? '';
-    grade = await SharedPref().getGrade() ?? '';
+    String _name = await SharedPref().getName() ?? '';
+    String _grade = await SharedPref().getGrade() ?? '';
+    String _profilePic = await SharedPref().getProfilePic() ??
+        'https://firebasestorage.googleapis.com/v0/b/pasca-ios-and-android-dc988.appspot.com/o/Leonardo_Diffusion_XL_very_beutifull_computer_programming_setu_7.jpg?alt=media&token=7c164fff-c657-40f7-9219-bbd587c36138';
     // Once the values are retrieved, you can update your UI or perform any other actions
+    setState(() {
+      name = _name;
+      grade = _grade;
+      profilePic = _profilePic;
+    });
   }
 
   //image slider of profile card list of images
@@ -195,10 +201,11 @@ class _StudentHomePageState extends State<StudentHomePage> {
                               height: 65,
                               margin: const EdgeInsets.only(
                                   right: 15, bottom: 5, top: 20),
-                              child: const CircleAvatar(
+                              child: CircleAvatar(
                                 radius: 50, // Adjust the radius as needed
-                                backgroundImage: AssetImage(
-                                    'lib/assets/images/profile.png'), // Provide the image path
+                                backgroundImage: NetworkImage(profilePic),
+                                backgroundColor: Colors
+                                    .transparent, // Provide the image path
                               ),
                             ),
                           ],
@@ -391,6 +398,4 @@ class _StudentHomePageState extends State<StudentHomePage> {
       ),
     );
   }
-
-  void getUserInfo() {}
 }

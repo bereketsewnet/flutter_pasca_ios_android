@@ -67,10 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery
-        .of(context)
-        .size
-        .width;
+    double w = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: CustomColors.primaryColor,
       appBar: AppBar(
@@ -117,7 +114,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     height: 45,
                     decoration: BoxDecoration(
                       border:
-                      Border.all(color: CustomColors.fourthColor, width: 1),
+                          Border.all(color: CustomColors.fourthColor, width: 1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: DropdownButton(
@@ -161,7 +158,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     height: 45,
                     decoration: BoxDecoration(
                       border:
-                      Border.all(color: CustomColors.fourthColor, width: 1),
+                          Border.all(color: CustomColors.fourthColor, width: 1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: DropdownButton(
@@ -275,13 +272,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                   icon: _isObsecure
                       ? const Icon(
-                    Icons.visibility,
-                    color: CustomColors.thirdColor,
-                  )
+                          Icons.visibility,
+                          color: CustomColors.thirdColor,
+                        )
                       : const Icon(
-                    Icons.visibility_off,
-                    color: CustomColors.thirdColor,
-                  ),
+                          Icons.visibility_off,
+                          color: CustomColors.thirdColor,
+                        ),
                 ),
               ),
             ),
@@ -366,7 +363,6 @@ class _RegisterPageState extends State<RegisterPage> {
           User? user = FirebaseAuth.instance.currentUser;
           uid = user!.uid;
 
-
           // register user in to realtime database
           DatabaseReference databaseRef = FirebaseDatabase.instance.reference();
 
@@ -382,11 +378,12 @@ class _RegisterPageState extends State<RegisterPage> {
             'grade': grade,
             'type': type,
             'uid': uid,
+            'profilePic': 'default',
           };
 
           // Insert the data at the generated reference
           usersRef.set(userData).then((_) {
-           // after registration clean all
+            // after registration clean all
             nameController.text = '';
             emailController.text = '';
             phoneController.text = '';
@@ -394,7 +391,7 @@ class _RegisterPageState extends State<RegisterPage> {
             passwordController.text = '';
             showSnackBar(context, 'Success');
           }).catchError((error) {
-            showSnackBar(context, 'Not Inserted');
+            showSnackBar(context, error.toString());
           });
         }
       } on FirebaseAuthException catch (e) {
