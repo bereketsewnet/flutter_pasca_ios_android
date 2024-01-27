@@ -23,37 +23,47 @@ class ChatMessageList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Container(
-      width: size.width / 1.5,
-      padding: const EdgeInsets.all(10),
-      margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: backColor,
-        borderRadius: BorderRadius.only(
-          topLeft: const Radius.circular(20),
-          topRight: const Radius.circular(20),
-          bottomLeft: Radius.circular(RBL),
-          bottomRight: Radius.circular(RBR),
-        ),
-      ),
-      child: Column(
+    return Row(
+        mainAxisAlignment: inSideContaintAlign == Alignment.centerLeft
+            ? MainAxisAlignment.start
+            : MainAxisAlignment.end,
         children: [
-          Align(
-            alignment: inSideContaintAlign,
-            child: Text(
-              message,
-              style: TextStyle(color: textColor),
+          Flexible(
+            child: IntrinsicWidth(
+              child: Container(
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
+                margin: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: backColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(15),
+                    topRight: const Radius.circular(15),
+                    bottomLeft: Radius.circular(RBL),
+                    bottomRight: Radius.circular(RBR),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: inSideContaintAlign,
+                      child: Text(
+                        message,
+                        style: TextStyle(color: textColor),
+                      ),
+                    ),
+                    SizedBox(height: 3),
+                    Align(
+                      alignment: inSideContaintAlign,
+                      child: Text(
+                        timeStamp,
+                        style: TextStyle(color: textColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-          Align(
-            alignment: inSideContaintAlign,
-            child: Text(
-              timeStamp,
-              style: TextStyle(color: textColor),
-            ),
-          ),
-        ],
-      ),
-    );
+        ]);
   }
 }

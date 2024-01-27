@@ -16,7 +16,7 @@ class UsersListView extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       decoration: BoxDecoration(
-        color: CustomColors.thirdColor,
+        color: CustomColors.secondaryColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -46,7 +46,7 @@ class UsersListView extends StatelessWidget {
               users['profilePic'] ??
                   'https://www.catholicsingles.com/wp-content/uploads/2020/06/blog-header-3.png',
             ),
-            backgroundColor: CustomColors.thirdColor,
+            backgroundColor: CustomColors.secondaryColor,
             radius: 30,
           ),
           title: Text(
@@ -54,7 +54,7 @@ class UsersListView extends StatelessWidget {
             style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                color: CustomColors.primaryColor),
+                color: CustomColors.thirdColor),
           ),
           subtitle: Row(
             children: [
@@ -62,7 +62,7 @@ class UsersListView extends StatelessWidget {
               Text(
                 users['type'],
                 style: const TextStyle(
-                  color: CustomColors.secondaryColor,
+                  color: CustomColors.fourthColor,
                 ),
               ),
             ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
 import 'package:pasca/methods/my_methods/shared_pref_method.dart';
+import 'package:pasca/pages/common_page/all_users_list.dart';
 import 'package:pasca/pages/student_page/law.dart';
 import 'package:pasca/pages/student_page/subject_user_list.dart';
 import 'package:pasca/wediget/user_list_view.dart';
@@ -92,7 +93,7 @@ class _UpperTabBarState extends State<UpperTabBar> {
         ),
         body: const TabBarView(
           children: [
-            SubjectUserList(),
+            AllUsersList(),
             Law(),
           ],
         ),

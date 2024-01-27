@@ -84,40 +84,38 @@ class _ChatRoomState extends State<ChatRoom> {
       body: Column(
         children: [
           Expanded(
-            child: Container(
-              child: FirebaseAnimatedList(
-                query: _dbRef,
-                itemBuilder: (BuildContext context, DataSnapshot snapshot,
-                    Animation<double> animation, int index) {
-                  Map users = snapshot.value as Map;
-                  // check message sender to my id b/c to put on the right side ot message
-                  final bool isMe = users['sender'] == uid;
-                  // check if message send by me or receive by me b/c in chat room display on my massage and friend message
-                  if(users['sender'] == uid && users['receiver'] == widget.friendId || users['sender'] == widget.friendId && users['receiver'] == uid){
-                    return Align(
-                      alignment:
-                      isMe ? Alignment.centerRight : Alignment.centerLeft,
-                      child: ChatMessageList(
-                        // this is list item inside containt if it is me change border, alignment , and color based on bool answer
-                        message: users['message'],
-                        timeStamp: users['timeStamp'],
-                        RBL: isMe ? 20 : 3,
-                        RBR: isMe ? 3 : 20,
-                        backColor: isMe
-                            ? CustomColors.secondaryColor
-                            : CustomColors.fourthColor,
-                        textColor: isMe
-                            ? CustomColors.fourthColor
-                            : CustomColors.primaryColor,
-                        inSideContaintAlign:
-                        isMe ? const Alignment(1, 0) : const Alignment(-1, 0),
-                      ),
-                    );
-                  }
-                  // if no message send me and myfriend it will return null container
-                  return Container();
-                },
-              ),
+            child: FirebaseAnimatedList(
+              query: _dbRef,
+              itemBuilder: (BuildContext context, DataSnapshot snapshot,
+                  Animation<double> animation, int index) {
+                Map users = snapshot.value as Map;
+                // check message sender to my id b/c to put on the right side ot message
+                final bool isMe = users['sender'] == uid;
+                // check if message send by me or receive by me b/c in chat room display on my massage and friend message
+                if(users['sender'] == uid && users['receiver'] == widget.friendId || users['sender'] == widget.friendId && users['receiver'] == uid){
+                  return Align(
+                    alignment:
+                    isMe ? Alignment.centerRight : Alignment.centerLeft,
+                    child: ChatMessageList(
+                      // this is list item inside containt if it is me change border, alignment , and color based on bool answer
+                      message: users['message'],
+                      timeStamp: users['timeStamp'],
+                      RBL: isMe ? 20 : 3,
+                      RBR: isMe ? 3 : 20,
+                      backColor: isMe
+                          ? CustomColors.secondaryColor
+                          : CustomColors.fourthColor,
+                      textColor: isMe
+                          ? CustomColors.fourthColor
+                          : CustomColors.primaryColor,
+                      inSideContaintAlign:
+                      isMe ? const Alignment(1, 0) : const Alignment(-1, 0),
+                    ),
+                  );
+                }
+                // if no message send me and myfriend it will return null container
+                return Container();
+              },
             ),
           ),
           Align(
@@ -218,8 +216,7 @@ class _ChatRoomState extends State<ChatRoom> {
     DatabaseReference dbRefChatList = FirebaseDatabase.instance
         .ref()
         .child('ChatList')
-        .child(myId)
-        .child(friendId);
+        .child(myId);
 
     if (message.isNotEmpty && message != ' ' && message != '  ') {
       // chat info map or object
