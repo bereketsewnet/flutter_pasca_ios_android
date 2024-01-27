@@ -93,7 +93,7 @@ class _UpperTabBarState extends State<UpperTabBar> {
         ),
         body: const TabBarView(
           children: [
-            AllUsersList(),
+            SubjectUserList(),
             Law(),
           ],
         ),

@@ -19,11 +19,13 @@ class SubjectUserList extends StatefulWidget {
 
 class _SubjectUserListState extends State<SubjectUserList> {
   String uid = '';
+  String friedId = '';
 
   @override
   void initState() {
     super.initState();
     fetchData();
+    fetch_user_and_message();
   }
 
   void fetchData() async {
@@ -36,8 +38,7 @@ class _SubjectUserListState extends State<SubjectUserList> {
 
   @override
   Widget build(BuildContext context) {
-    final Query _dbRef =
-        FirebaseDatabase.instance.ref().child('ChatList').child(uid);
+    final Query _dbRefUsers = FirebaseDatabase.instance.ref().child('users');
 
     return Scaffold(
       backgroundColor: CustomColors.primaryColor,
@@ -45,28 +46,12 @@ class _SubjectUserListState extends State<SubjectUserList> {
         width: double.infinity,
         margin: const EdgeInsets.only(top: 10),
         child: FirebaseAnimatedList(
-          query: _dbRef,
+          query: _dbRefUsers,
           itemBuilder: (BuildContext context, DataSnapshot snapshot,
               Animation<double> animation, int index) {
             Map users = snapshot.value as Map;
-            // check if the user is equal to my id not display b/c i not chat my self and will return null container
-            // if(users['friendId'] != uid){
-            //   return UsersListView(users: users);
-            // }
-            // Extract and store the friendIds in a list of strings
-            List<String> friendIdsList = [];
-            users.forEach((friendId, value) {
-              friendIdsList.add(friendId);
-              print(friendId);
-            });
-            return Center(
-              child: Container(
-                child: Text(
-                  ';kj',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            );
+
+            return Container();
           },
         ),
       ),
@@ -78,5 +63,66 @@ class _SubjectUserListState extends State<SubjectUserList> {
         ),
       ),
     );
+  }
+
+  void fetch_user_and_message() {
+    final DatabaseReference dbRefChat =
+        FirebaseDatabase.instance.reference().child("Chats");
+    final DatabaseReference dbRefUser =
+        FirebaseDatabase.instance.reference().child('users');
+    List<Map<String, dynamic>> chatingUserList = [];
+
+    // getting all chat message that receive and send by me
+    dbRefChat.onValue.listen((event) {
+      if (event.snapshot.value != null) {
+        List<Map<String, dynamic>> chats = [];
+        Map values = event.snapshot.value as Map;
+        values.forEach((key, value) {
+          chats.add(Map<String, dynamic>.from(value));
+        });
+        //// if we get all chat message next check sender or receiver is me b/c that means we start chat
+        List<Map<String, dynamic>> chatingUserListR = [];
+        chatingUserListR.clear();
+        for (int i = 0; i < chats.length; i++) {
+          if (chats[i]['sender'] == uid || chats[i]['receive'] == uid) {
+            String friend;
+            if (chats[i]['sender'] == uid) {
+              friend = chats[i]['receiver'];
+            } else {
+              friend = chats[i]['sender'];
+            }
+            Map<String, dynamic> chatingUser = {
+              'message': chats[i]['message'],
+              'timeStamp': chats[i]['timeStamp'],
+              'friend': friend,
+            };
+            chatingUserListR.add(chatingUser);
+          }
+        }
+        setState(() {
+          chatingUserList = chatingUserListR;
+        });
+      }
+    });
+
+    dbRefUser.onValue.listen((event) {
+      if (event.snapshot.value != null) {
+        List<Map<String, dynamic>> usersListR = [];
+        Map usersMap = event.snapshot.value as Map;
+
+        usersMap.forEach((key, value) {
+          // Assuming that each user has keys like 'email', 'name', 'password', etc.
+          Map<String, dynamic> user = Map<String, dynamic>.from(value);
+          usersListR.add(user);
+        });
+
+        for(int i = 0; i < usersListR.length; i++){
+          if(usersListR[i]['uid'] == chatingUserList[0]['friend']){
+
+          }
+        }
+        // showSnackBar(context, usersList[2]['email']);
+      }
+    });
   }
 }
