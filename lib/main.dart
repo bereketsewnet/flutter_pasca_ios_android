@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
       ),
-      home: SubjectUserList(),
+      home: LoginPage(),
     );
   }
 }

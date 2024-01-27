@@ -20,12 +20,13 @@ class SubjectUserList extends StatefulWidget {
 class _SubjectUserListState extends State<SubjectUserList> {
   String uid = '';
   String friedId = '';
+  List<Map<String, dynamic>> filterChatingFinal = [];
 
   @override
   void initState() {
     super.initState();
     fetchData();
-    fetch_user_and_message();
+    fetch_starting_chat_user();
   }
 
   void fetchData() async {
@@ -38,22 +39,15 @@ class _SubjectUserListState extends State<SubjectUserList> {
 
   @override
   Widget build(BuildContext context) {
-    final Query _dbRefUsers = FirebaseDatabase.instance.ref().child('users');
 
     return Scaffold(
       backgroundColor: CustomColors.primaryColor,
-      body: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(top: 10),
-        child: FirebaseAnimatedList(
-          query: _dbRefUsers,
-          itemBuilder: (BuildContext context, DataSnapshot snapshot,
-              Animation<double> animation, int index) {
-            Map users = snapshot.value as Map;
-
-            return Container();
-          },
-        ),
+      body: ListView.builder(
+        itemCount: filterChatingFinal.length,
+        itemBuilder: (context, index) {
+          Map<String, dynamic> starttingChatUsers = filterChatingFinal[index];
+          return buildChatCard(starttingChatUsers);
+        },
       ),
       floatingActionButton: FlotingButtom(
         color: CustomColors.thirdColor,
@@ -65,64 +59,158 @@ class _SubjectUserListState extends State<SubjectUserList> {
     );
   }
 
-  void fetch_user_and_message() {
-    final DatabaseReference dbRefChat =
-        FirebaseDatabase.instance.reference().child("Chats");
-    final DatabaseReference dbRefUser =
-        FirebaseDatabase.instance.reference().child('users');
-    List<Map<String, dynamic>> chatingUserList = [];
+// get the who start chat with me and filter it by list of map
+Future<void> fetch_starting_chat_user() async {
+  final DatabaseReference dbRefChat =
+      FirebaseDatabase.instance.reference().child("Chats");
+  final DatabaseReference dbRefUser =
+      FirebaseDatabase.instance.reference().child('users');
+  List<Map<String, dynamic>> chatingUserList = [];
 
-    // getting all chat message that receive and send by me
-    dbRefChat.onValue.listen((event) {
-      if (event.snapshot.value != null) {
-        List<Map<String, dynamic>> chats = [];
-        Map values = event.snapshot.value as Map;
-        values.forEach((key, value) {
-          chats.add(Map<String, dynamic>.from(value));
-        });
-        //// if we get all chat message next check sender or receiver is me b/c that means we start chat
-        List<Map<String, dynamic>> chatingUserListR = [];
-        chatingUserListR.clear();
-        for (int i = 0; i < chats.length; i++) {
-          if (chats[i]['sender'] == uid || chats[i]['receive'] == uid) {
-            String friend;
-            if (chats[i]['sender'] == uid) {
-              friend = chats[i]['receiver'];
-            } else {
-              friend = chats[i]['sender'];
-            }
-            Map<String, dynamic> chatingUser = {
-              'message': chats[i]['message'],
-              'timeStamp': chats[i]['timeStamp'],
-              'friend': friend,
+
+  // getting all chat message that receive and send by me
+ await dbRefChat.onValue.listen((event) {
+    if (event.snapshot.value != null) {
+      List<Map<String, dynamic>> chats = [];
+      Map values = event.snapshot.value as Map;
+      values.forEach((key, value) {
+        chats.add(Map<String, dynamic>.from(value));
+      });
+      //// if we get all chat message next check sender or receiver is me b/c that means we start chat
+      List<Map<String, dynamic>> chatingUserListR = [];
+      chatingUserListR.clear();
+      for (int i = 0; i < chats.length; i++) {
+        if (chats[i]['sender'] == uid || chats[i]['receive'] == uid) {
+          String friend;
+          if (chats[i]['sender'] == uid) {
+            friend = chats[i]['receiver'];
+          } else {
+            friend = chats[i]['sender'];
+          }
+          Map<String, dynamic> chatingUser = {
+            'message': chats[i]['message'],
+            'timeStamp': chats[i]['timeStamp'],
+            'friend': friend,
+          };
+          chatingUserListR.add(chatingUser);
+        }
+      }
+      setState(() {
+        chatingUserList = chatingUserListR;
+      });
+    }
+  });
+  // geting filter only Chat with me contact not duplicated user
+ await dbRefUser.onValue.listen((event){
+    if (event.snapshot.value != null) {
+      List<Map<String, dynamic>> usersListR = [];
+      Map usersMap = event.snapshot.value as Map;
+
+      usersMap.forEach((key, value) {
+        // Assuming that each user has keys like 'email', 'name', 'password', etc.
+        Map<String, dynamic> user = Map<String, dynamic>.from(value);
+        usersListR.add(user);
+      });
+      // createing getting receiver for loop map variable
+      List<Map<String, dynamic>> filterChatingFinalR = [];
+      filterChatingFinalR.clear();
+      // checking userid = starting chat friend id. b/c to get name and profile pic from that id then display in to start chat page
+      for (int i = 0; i < usersListR.length; i++) {
+        for (int ii = 0; ii < chatingUserList.length; ii++) {
+          if (usersListR[i]['uid'] == chatingUserList[ii]['friend']) {
+
+            Map<String, dynamic> filterUser = {
+              'uid' : usersListR[i]['uid'],
+              'name': usersListR[i]['name'],
+              'profilePic': usersListR[i]['profilePic'],
+              'message': chatingUserList[ii]['message'],
+              'timeStamp': chatingUserList[ii]['timeStamp'],
             };
-            chatingUserListR.add(chatingUser);
+            filterChatingFinalR.add(filterUser);
           }
         }
-        setState(() {
-          chatingUserList = chatingUserListR;
-        });
       }
-    });
+      setState(() {
+        filterChatingFinal = filterChatingFinalR;
+      });
+    }
+  });
+}
 
-    dbRefUser.onValue.listen((event) {
-      if (event.snapshot.value != null) {
-        List<Map<String, dynamic>> usersListR = [];
-        Map usersMap = event.snapshot.value as Map;
+  // Future<List<Map<String, dynamic>>> fetchStartingChatUser() async {
+  //   final DatabaseReference dbRefChat =
+  //   FirebaseDatabase.instance.reference().child("Chats");
+  //   final DatabaseReference dbRefUser =
+  //   FirebaseDatabase.instance.reference().child('users');
+  //   List<Map<String, dynamic>> chatingUserList = [];
+  //   List<Map<String, dynamic>> filterChatingFinal = [];
+  //
+  //   // getting all chat messages that are sent or received by the user
+  //   await dbRefChat.onValue.listen((event) async {
+  //     if (event.snapshot.value != null) {
+  //       List<Map<String, dynamic>> chats = [];
+  //       Map values = event.snapshot.value as Map;
+  //       values.forEach((key, value) {
+  //         chats.add(Map<String, dynamic>.from(value));
+  //       });
+  //
+  //       // check if sender or receiver is the user to determine if it's a chat with the user
+  //       List<Map<String, dynamic>> chatingUserListR = [];
+  //       chatingUserListR.clear();
+  //       for (int i = 0; i < chats.length; i++) {
+  //         if (chats[i]['sender'] == uid || chats[i]['receive'] == uid) {
+  //           String friend;
+  //           if (chats[i]['sender'] == uid) {
+  //             friend = chats[i]['receiver'];
+  //           } else {
+  //             friend = chats[i]['sender'];
+  //           }
+  //           Map<String, dynamic> chatingUser = {
+  //             'message': chats[i]['message'],
+  //             'timeStamp': chats[i]['timeStamp'],
+  //             'friend': friend,
+  //           };
+  //           chatingUserListR.add(chatingUser);
+  //         }
+  //       }
+  //       chatingUserList = chatingUserListR;
+  //     }
+  //   }).asFuture();
+  //
+  //   // get users from the database
+  //   await dbRefUser.onValue.listen((event) async {
+  //     if (event.snapshot.value != null) {
+  //       List<Map<String, dynamic>> usersListR = [];
+  //       Map usersMap = event.snapshot.value as Map;
+  //
+  //       usersMap.forEach((key, value) {
+  //         // Assuming that each user has keys like 'uid', 'name', 'profilePic', etc.
+  //         Map<String, dynamic> user = Map<String, dynamic>.from(value);
+  //         usersListR.add(user);
+  //       });
+  //
+  //       // filter users based on chatingUserList
+  //       List<Map<String, dynamic>> filterChatingFinalR = [];
+  //       filterChatingFinalR.clear();
+  //       for (int i = 0; i < usersListR.length; i++) {
+  //         for (int ii = 0; ii < chatingUserList.length; ii++) {
+  //           if (usersListR[i]['uid'] == chatingUserList[ii]['friend']) {
+  //             Map<String, dynamic> filterUser = {
+  //               'uid': usersListR[i]['uid'],
+  //               'name': usersListR[i]['name'],
+  //               'profilePic': usersListR[i]['profilePic'],
+  //               'message': chatingUserList[ii]['message'],
+  //               'timeStamp': chatingUserList[ii]['timeStamp'],
+  //             };
+  //             filterChatingFinalR.add(filterUser);
+  //           }
+  //         }
+  //       }
+  //       filterChatingFinal = filterChatingFinalR;
+  //     }
+  //   }).asFuture();
+  //   showSnackBar(context, filterChatingFinal[0]['name']);
+  //   return filterChatingFinal;
+  // }
 
-        usersMap.forEach((key, value) {
-          // Assuming that each user has keys like 'email', 'name', 'password', etc.
-          Map<String, dynamic> user = Map<String, dynamic>.from(value);
-          usersListR.add(user);
-        });
-
-        for(int i = 0; i < usersListR.length; i++){
-          if(usersListR[i]['uid'] == chatingUserList[0]['friend']){
-
-          }
-        }
-        // showSnackBar(context, usersList[2]['email']);
-      }
-    });
-  }
 }
