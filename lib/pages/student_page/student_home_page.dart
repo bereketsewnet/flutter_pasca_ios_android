@@ -8,6 +8,7 @@ import 'package:pasca/assets/custom_colors/colors.dart';
 import 'package:pasca/methods/my_methods/shared_pref_method.dart';
 import 'package:pasca/pages/student_page/law.dart';
 import 'package:pasca/pages/student_page/subject_user_list.dart';
+import 'package:pasca/third_code_test.dart';
 import 'package:pasca/wediget/custom_button.dart';
 
 import 'package:pasca/wediget/normal_button.dart';
@@ -268,7 +269,14 @@ class _StudentHomePageState extends State<StudentHomePage> {
                         buttonText: 'Daily',
                       ),
                       CustomButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatRoomTest(friendId: '1', profileImage: 'profileImage', friendName: 'friendName'),
+                            ),
+                          );
+                        },
                         imagePath: 'lib/assets/images/report.png',
                         buttonText: 'Report',
                       ),

@@ -13,7 +13,7 @@ class ChatMessageList extends StatelessWidget {
   });
 
   String message;
-  DateTime timeStamp;
+  String timeStamp;
   Color backColor;
   Color textColor;
   double RBL;
@@ -48,7 +48,7 @@ class ChatMessageList extends StatelessWidget {
           Align(
             alignment: inSideContaintAlign,
             child: Text(
-              timeStamp.toString(),
+              timeStamp,
               style: TextStyle(color: textColor),
             ),
           ),

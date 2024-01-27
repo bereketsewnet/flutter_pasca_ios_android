@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
 import 'package:pasca/methods/my_methods/shared_pref_method.dart';
 import 'package:pasca/wediget/chat_messages_list.dart';
@@ -26,10 +28,28 @@ class ChatRoom extends StatefulWidget {
 }
 
 class _ChatRoomState extends State<ChatRoom> {
+  final TextEditingController _messageController = TextEditingController();
+  final Query _dbRef = FirebaseDatabase.instance.ref().child('Chats');
+  String uid = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  void fetchData() async {
+    String _uid = await SharedPref().getUid() ?? '';
+    // Once the values are retrieved, you can update your UI or perform any other actions
+    setState(() {
+      uid = _uid;
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    TextEditingController _messageController = TextEditingController();
     final List<ChatMessage> chatMessages = [
       ChatMessage(
         text: 'Hello',
@@ -58,14 +78,15 @@ class _ChatRoomState extends State<ChatRoom> {
         ),
         title: Row(
           children: [
-             CircleAvatar(
-              backgroundImage: NetworkImage(widget.profileImage),
+            CircleAvatar(
+              backgroundImage: NetworkImage(
+                  widget.profileImage), // get profile from chat list
             ),
             const SizedBox(
               width: 10,
             ),
             Text(
-              widget.friendName,
+              widget.friendName, // get name from chat list
               style: const TextStyle(
                 color: CustomColors.thirdColor,
               ),
@@ -77,31 +98,35 @@ class _ChatRoomState extends State<ChatRoom> {
         children: [
           Expanded(
             child: Container(
-              child: ListView.builder(
-                itemCount: chatMessages.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final message = chatMessages[index];
-                  final isMe = message.sender == 'Me';
-
-                  return Align(
-                    alignment:
-                        isMe ? Alignment.centerRight : Alignment.centerLeft,
-                    child: ChatMessageList(
-                      // this is list item inside containt if it is me change border, alignment , and color based on bool answer
-                      message: message.text,
-                      timeStamp: message.timestamp,
-                      RBL: isMe ? 20 : 3,
-                      RBR: isMe ? 3 : 20,
-                      backColor: isMe
-                          ? CustomColors.secondaryColor
-                          : CustomColors.fourthColor,
-                      textColor: isMe
-                          ? CustomColors.fourthColor
-                          : CustomColors.primaryColor,
-                      inSideContaintAlign:
-                          isMe ? const Alignment(1, 0) : const Alignment(-1, 0),
-                    ),
-                  );
+              child: FirebaseAnimatedList(
+                query: _dbRef,
+                itemBuilder: (BuildContext context, DataSnapshot snapshot,
+                    Animation<double> animation, int index) {
+                  Map users = snapshot.value as Map;
+                  final bool isMe = users['sender'] == uid;
+                  
+                  if(users['sender'] == uid && users['receiver'] == widget.friendId || users['sender'] == widget.friendId && users['receiver'] == uid){
+                    return Align(
+                      alignment:
+                      isMe ? Alignment.centerRight : Alignment.centerLeft,
+                      child: ChatMessageList(
+                        // this is list item inside containt if it is me change border, alignment , and color based on bool answer
+                        message: users['message'],
+                        timeStamp: users['timeStamp'],
+                        RBL: isMe ? 20 : 3,
+                        RBR: isMe ? 3 : 20,
+                        backColor: isMe
+                            ? CustomColors.secondaryColor
+                            : CustomColors.fourthColor,
+                        textColor: isMe
+                            ? CustomColors.fourthColor
+                            : CustomColors.primaryColor,
+                        inSideContaintAlign:
+                        isMe ? const Alignment(1, 0) : const Alignment(-1, 0),
+                      ),
+                    );
+                  }
+                  return Container();
                 },
               ),
             ),
@@ -193,12 +218,44 @@ class _ChatRoomState extends State<ChatRoom> {
     User? user = FirebaseAuth.instance.currentUser;
     String uid = user!.uid;
     String friendId = widget.friendId;
+    String message = _messageController.text;
     String myId = await SharedPref().getUid() ?? uid;
+    DateTime now = DateTime.now();
+    var format = DateFormat('HH:mm');
+    String timeStamp = format.format(now);
     DatabaseReference dbRefChat =
         FirebaseDatabase.instance.ref().child('Chats');
-    DatabaseReference dbRefChatList =
-        FirebaseDatabase.instance.ref().child(myId).child(friendId);
-    showSnackBar(context, myId);
-    showSnackBar(context, friendId);
+    DatabaseReference dbRefChatList = FirebaseDatabase.instance
+        .ref()
+        .child('ChatList')
+        .child(myId)
+        .child(friendId);
+
+    if (message.isNotEmpty && message != ' ' && message != '  ') {
+      // chat info map
+      Map<String, dynamic> chatData = {
+        'message': message,
+        'sender': myId,
+        'receiver': friendId,
+        'timeStamp': timeStamp,
+      };
+      // use for start chat map container myId child to friend Id
+      Map<String, dynamic> chatList = {
+        'friendId': friendId,
+      };
+      // inserting chat data
+      dbRefChat.push().set(chatData).then((_) {
+        // handle code when data inserted
+        _messageController.text = '';
+      }).catchError((error) {
+        showSnackBar(context, 'Error inserting data: $error');
+      });
+      // inserting chatList for the use of which one is start chating
+      dbRefChatList.set(chatList).then((_) {
+        // handle code when data inserted
+      }).catchError((error) {
+        showSnackBar(context, 'Error inserting data: $error');
+      });
+    }
   }
 }

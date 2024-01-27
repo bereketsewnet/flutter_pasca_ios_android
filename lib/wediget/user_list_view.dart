@@ -14,7 +14,7 @@ class UsersListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       decoration: BoxDecoration(
         color: CustomColors.thirdColor,
         borderRadius: BorderRadius.circular(20),
@@ -23,7 +23,7 @@ class UsersListView extends StatelessWidget {
             color: Colors.black.withOpacity(0.3),
             spreadRadius: 5,
             blurRadius: 15,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
           ),
         ],
       ),
@@ -61,7 +61,7 @@ class UsersListView extends StatelessWidget {
               const SizedBox(width: 3),
               Text(
                 users['type'],
-                style: TextStyle(
+                style: const TextStyle(
                   color: CustomColors.secondaryColor,
                 ),
               ),
@@ -69,7 +69,7 @@ class UsersListView extends StatelessWidget {
           ),
           trailing: Text(
             users['grade'] ?? 'Grade',
-            style: TextStyle(color: CustomColors.secondaryColor),
+            style: const TextStyle(color: CustomColors.secondaryColor),
           ),
         ),
       ),
