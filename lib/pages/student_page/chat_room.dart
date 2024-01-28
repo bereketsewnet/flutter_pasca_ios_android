@@ -213,10 +213,6 @@ class _ChatRoomState extends State<ChatRoom> {
     String timeStamp = format.format(now);
     DatabaseReference dbRefChat =
         FirebaseDatabase.instance.ref().child('Chats');
-    DatabaseReference dbRefChatList = FirebaseDatabase.instance
-        .ref()
-        .child('ChatList')
-        .child(myId);
 
     if (message.isNotEmpty && message != ' ' && message != '  ') {
       // chat info map or object
@@ -226,10 +222,6 @@ class _ChatRoomState extends State<ChatRoom> {
         'receiver': friendId,
         'timeStamp': timeStamp,
       };
-      // use for start chat map container myId child to friend Id
-      Map<String, dynamic> chatList = {
-        'friendId': friendId,
-      };
       // inserting chat data
       dbRefChat.push().set(chatData).then((_) {
         // handle code when data inserted
@@ -237,12 +229,7 @@ class _ChatRoomState extends State<ChatRoom> {
       }).catchError((error) {
         showSnackBar(context, 'Error inserting data: $error');
       });
-      // inserting chatList for the use of which one is start chating
-      dbRefChatList.set(chatList).then((_) {
-        // handle code when data inserted
-      }).catchError((error) {
-        showSnackBar(context, 'Error inserting data: $error');
-      });
+
     }
   }
 }

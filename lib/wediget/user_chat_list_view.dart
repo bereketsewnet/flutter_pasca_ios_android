@@ -51,7 +51,7 @@ Widget buildChatCard(Map<String, dynamic> users) {
         ),
         trailing: Text(
           users['timeStamp'] ?? 'Grade',
-          style: const TextStyle(color: CustomColors.secondaryColor),
+          style: const TextStyle(color: CustomColors.fourthColor),
         ),
       ),
     ),
