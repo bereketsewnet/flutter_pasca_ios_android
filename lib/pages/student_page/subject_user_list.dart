@@ -52,12 +52,6 @@ class _SubjectUserListState extends State<SubjectUserList> {
       ),
       floatingActionButton: FlotingButtom(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => StudentHomePage(),
-            ),
-          );
           showSnackBar(context, 'message');
         },
         color: CustomColors.thirdColor,
@@ -101,6 +95,7 @@ class _SubjectUserListState extends State<SubjectUserList> {
               'timeStamp': chats[i]['timeStamp'],
               'friend': friend,
             };
+
             chatingUserListR.add(chatingUser);
           }
         }
@@ -110,7 +105,7 @@ class _SubjectUserListState extends State<SubjectUserList> {
       }
     });
     // geting filter only Chat with me contact not duplicated user
-    await dbRefUser.onValue.listen((event) {
+    await dbRefUser.once().then((event) {
       if (event.snapshot.value != null) {
         List<Map<String, dynamic>> usersListR = [];
         Map usersMap = event.snapshot.value as Map;
@@ -134,109 +129,36 @@ class _SubjectUserListState extends State<SubjectUserList> {
                 'message': chatingUserList[ii]['message'],
                 'timeStamp': chatingUserList[ii]['timeStamp'],
               };
-              // check if the user chat again and again and not add to list. b/c it come again account display in chat system
-              if (filterChatingFinalR.isNotEmpty) {
-                // to do this check map list id and compare to retired id and it's again not add to the map list
-                for (int iii = 0; iii < filterChatingFinalR.length; iii++) {
-                  if (filterChatingFinalR[iii]['uid'] != usersListR[i]['uid']) {
-                    filterChatingFinalR.add(filterUser);
-                  } else {
-                    setState(() {
-                      // if it is same id chat. update the message and time of that ui user
-                      filterChatingFinalR[iii]['message'] =
-                          chatingUserList[ii]['message'];
-                      filterChatingFinalR[iii]['timeStamp'] =
-                          chatingUserList[ii]['timeStamp'];
-                    });
-
-                  }
-                }
-              } else {
-                filterChatingFinalR.add(filterUser);
-              }
+              filterChatingFinalR.add(filterUser);
             }
           }
         }
         setState(() {
           filterChatingFinal = filterChatingFinalR;
+          removeDuplicateIds();
         });
       }
     });
   }
 
-// Future<List<Map<String, dynamic>>> fetchStartingChatUser() async {
-//   final DatabaseReference dbRefChat =
-//   FirebaseDatabase.instance.reference().child("Chats");
-//   final DatabaseReference dbRefUser =
-//   FirebaseDatabase.instance.reference().child('users');
-//   List<Map<String, dynamic>> chatingUserList = [];
-//   List<Map<String, dynamic>> filterChatingFinal = [];
-//
-//   // getting all chat messages that are sent or received by the user
-//   await dbRefChat.onValue.listen((event) async {
-//     if (event.snapshot.value != null) {
-//       List<Map<String, dynamic>> chats = [];
-//       Map values = event.snapshot.value as Map;
-//       values.forEach((key, value) {
-//         chats.add(Map<String, dynamic>.from(value));
-//       });
-//
-//       // check if sender or receiver is the user to determine if it's a chat with the user
-//       List<Map<String, dynamic>> chatingUserListR = [];
-//       chatingUserListR.clear();
-//       for (int i = 0; i < chats.length; i++) {
-//         if (chats[i]['sender'] == uid || chats[i]['receive'] == uid) {
-//           String friend;
-//           if (chats[i]['sender'] == uid) {
-//             friend = chats[i]['receiver'];
-//           } else {
-//             friend = chats[i]['sender'];
-//           }
-//           Map<String, dynamic> chatingUser = {
-//             'message': chats[i]['message'],
-//             'timeStamp': chats[i]['timeStamp'],
-//             'friend': friend,
-//           };
-//           chatingUserListR.add(chatingUser);
-//         }
-//       }
-//       chatingUserList = chatingUserListR;
-//     }
-//   }).asFuture();
-//
-//   // get users from the database
-//   await dbRefUser.onValue.listen((event) async {
-//     if (event.snapshot.value != null) {
-//       List<Map<String, dynamic>> usersListR = [];
-//       Map usersMap = event.snapshot.value as Map;
-//
-//       usersMap.forEach((key, value) {
-//         // Assuming that each user has keys like 'uid', 'name', 'profilePic', etc.
-//         Map<String, dynamic> user = Map<String, dynamic>.from(value);
-//         usersListR.add(user);
-//       });
-//
-//       // filter users based on chatingUserList
-//       List<Map<String, dynamic>> filterChatingFinalR = [];
-//       filterChatingFinalR.clear();
-//       for (int i = 0; i < usersListR.length; i++) {
-//         for (int ii = 0; ii < chatingUserList.length; ii++) {
-//           if (usersListR[i]['uid'] == chatingUserList[ii]['friend']) {
-//             Map<String, dynamic> filterUser = {
-//               'uid': usersListR[i]['uid'],
-//               'name': usersListR[i]['name'],
-//               'profilePic': usersListR[i]['profilePic'],
-//               'message': chatingUserList[ii]['message'],
-//               'timeStamp': chatingUserList[ii]['timeStamp'],
-//             };
-//             filterChatingFinalR.add(filterUser);
-//           }
-//         }
-//       }
-//       filterChatingFinal = filterChatingFinalR;
-//     }
-//   }).asFuture();
-//   showSnackBar(context, filterChatingFinal[0]['name']);
-//   return filterChatingFinal;
-// }
+  void removeDuplicateIds()   {
+    Set<String> uniqueIds = Set<String>();
+    List<Map<String, dynamic>> newList = [];
+
+    for (Map<String, dynamic> user in filterChatingFinal) {
+      String uid = user['uid'];
+
+      // Check if the ID is already present in the set
+      if (!uniqueIds.contains(uid)) {
+        // If not, add it to the set and include the user in the new list
+        uniqueIds.add(uid);
+        newList.add(user);
+      }
+      // If the ID is already present, it's a duplicate and can be skipped
+    }
+
+    // Update the original list with the new list
+    filterChatingFinal.clear();
+    filterChatingFinal.addAll(newList);
+  }
 }

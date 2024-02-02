@@ -6,12 +6,12 @@ class FlotingButtom extends StatelessWidget {
 
   Color? color;
   Icon? icon;
-  Function()? onPressed;
+  VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () {},
+      onPressed: onPressed,
       backgroundColor: color,
       child: icon,
     );

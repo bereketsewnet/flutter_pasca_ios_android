@@ -211,8 +211,8 @@ class _ChatRoomState extends State<ChatRoom> {
     DateTime now = DateTime.now();
     var format = DateFormat('HH:mm');
     String timeStamp = format.format(now);
-    DatabaseReference dbRefChat =
-        FirebaseDatabase.instance.ref().child('Chats');
+    DatabaseReference dbRef =
+        FirebaseDatabase.instance.ref();
 
     if (message.isNotEmpty && message != ' ' && message != '  ') {
       // chat info map or object
@@ -223,12 +223,26 @@ class _ChatRoomState extends State<ChatRoom> {
         'timeStamp': timeStamp,
       };
       // inserting chat data
-      dbRefChat.push().set(chatData).then((_) {
+      dbRef.child('Chats').push().set(chatData).then((_) {
         // handle code when data inserted
         _messageController.text = '';
       }).catchError((error) {
         showSnackBar(context, 'Error inserting data: $error');
       });
+
+      Map<String ,dynamic> chat_list = {
+        'lastMessage' : message,
+        'lastTimeStamp' : timeStamp,
+      };
+
+      dbRef.child('ChatList/$uid/$friendId').set(chat_list).then((_) {
+
+
+      }).catchError((error) {
+        showSnackBar(context, error.toString());
+      });
+
+
 
     }
   }
