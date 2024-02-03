@@ -1,59 +1,144 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
 
 import '../pages/student_page/chat_room.dart';
 
-Widget buildChatCard(Map<String, dynamic> users) {
-  // Customize the appearance of your chat card
-  return Container(
-    margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-    decoration: BoxDecoration(
-      color: CustomColors.secondaryColor,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.3),
-          spreadRadius: 5,
-          blurRadius: 15,
-          offset: const Offset(0, 5),
-        ),
-      ],
-    ),
-    child: InkWell(
-      onTap: () {},
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundImage: NetworkImage(
-            users['profilePic'] ??
-                'https://www.catholicsingles.com/wp-content/uploads/2020/06/blog-header-3.png',
+class StartchatUserList extends StatelessWidget {
+  StartchatUserList(this.chatingUsers);
+
+  Map<String, dynamic> chatingUsers;
+
+  @override
+  Widget build(BuildContext context) {
+    // Convert timestamp to a DateTime object
+    DateTime dateTime =
+        DateTime.fromMillisecondsSinceEpoch(chatingUsers['timeStamp']);
+
+    // Format the DateTime object to a string
+    String formattedTime = DateFormat('HH:mm').format(dateTime);
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+      decoration: BoxDecoration(
+        color: CustomColors.secondaryColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            spreadRadius: 5,
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
-          backgroundColor: CustomColors.secondaryColor,
-          radius: 30,
-        ),
-        title: Text(
-          users['name'] ?? 'FullName',
-          style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: CustomColors.thirdColor),
-        ),
-        subtitle: Row(
-          children: [
-            const SizedBox(width: 3),
-            Text(
-              users['message'],
-              style: const TextStyle(
-                color: CustomColors.fourthColor,
-              ),
+        ],
+      ),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatRoom(
+                  friendId: chatingUsers['friend'],
+                  profileImage: chatingUsers['profilePic'],
+                  friendName: chatingUsers['name']),
             ),
-          ],
-        ),
-        trailing: Text(
-          users['timeStamp'] ?? 'Grade',
-          style: const TextStyle(color: CustomColors.fourthColor),
+          );
+        },
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(
+              chatingUsers['profilePic'] ??
+                  'https://www.catholicsingles.com/wp-content/uploads/2020/06/blog-header-3.png',
+            ),
+            backgroundColor: CustomColors.secondaryColor,
+            radius: 30,
+          ),
+          title: Text(
+            chatingUsers['name'] ?? 'FullName',
+            style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: CustomColors.thirdColor),
+          ),
+          subtitle: Row(
+            children: [
+              const SizedBox(width: 3),
+              Text(
+                chatingUsers['message'],
+                style: const TextStyle(
+                  color: CustomColors.fourthColor,
+                ),
+              ),
+            ],
+          ),
+          trailing: Text(
+            formattedTime ?? 'Grade',
+            style: const TextStyle(color: CustomColors.fourthColor),
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
+
+// Widget buildChatCard(Map<String, dynamic> chatingUsers) {
+//   // Customize the appearance of your chat card
+//
+//   // Convert timestamp to a DateTime object
+//   DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(chatingUsers['timeStamp']);
+//
+//   // Format the DateTime object to a string
+//   String formattedTime = DateFormat('HH:mm').format(dateTime);
+//   return Container(
+//     margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+//     decoration: BoxDecoration(
+//       color: CustomColors.secondaryColor,
+//       borderRadius: BorderRadius.circular(20),
+//       boxShadow: [
+//         BoxShadow(
+//           color: Colors.black.withOpacity(0.3),
+//           spreadRadius: 5,
+//           blurRadius: 15,
+//           offset: const Offset(0, 5),
+//         ),
+//       ],
+//     ),
+//     child: InkWell(
+//       onTap: () {
+//
+//       },
+//       child: ListTile(
+//         leading: CircleAvatar(
+//           backgroundImage: NetworkImage(
+//             chatingUsers['profilePic'] ??
+//                 'https://www.catholicsingles.com/wp-content/uploads/2020/06/blog-header-3.png',
+//           ),
+//           backgroundColor: CustomColors.secondaryColor,
+//           radius: 30,
+//         ),
+//         title: Text(
+//           chatingUsers['name'] ?? 'FullName',
+//           style: const TextStyle(
+//               fontWeight: FontWeight.bold,
+//               fontSize: 16,
+//               color: CustomColors.thirdColor),
+//         ),
+//         subtitle: Row(
+//           children: [
+//             const SizedBox(width: 3),
+//             Text(
+//               chatingUsers['message'],
+//               style: const TextStyle(
+//                 color: CustomColors.fourthColor,
+//               ),
+//             ),
+//           ],
+//         ),
+//         trailing: Text(
+//           formattedTime ?? 'Grade',
+//           style: const TextStyle(color: CustomColors.fourthColor),
+//         ),
+//       ),
+//     ),
+//   );
+// }

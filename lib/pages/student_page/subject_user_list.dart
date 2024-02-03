@@ -21,14 +21,13 @@ class SubjectUserList extends StatefulWidget {
 
 class _SubjectUserListState extends State<SubjectUserList> {
   String uid = '';
-  String friedId = '';
   List<Map<String, dynamic>> filterChatingFinal = [];
 
   @override
   void initState() {
     super.initState();
     fetchData();
-    fetch_starting_chat_user();
+    startChatUser();
   }
 
   void fetchData() async {
@@ -47,7 +46,7 @@ class _SubjectUserListState extends State<SubjectUserList> {
         itemCount: filterChatingFinal.length,
         itemBuilder: (context, index) {
           Map<String, dynamic> starttingChatUsers = filterChatingFinal[index];
-          return buildChatCard(starttingChatUsers);
+          return StartchatUserList(starttingChatUsers);
         },
       ),
       floatingActionButton: FlotingButtom(
@@ -63,49 +62,87 @@ class _SubjectUserListState extends State<SubjectUserList> {
     );
   }
 
-// get the who start chat with me and filter it by list of map
-  Future<void> fetch_starting_chat_user() async {
-    final DatabaseReference dbRefChat =
-        FirebaseDatabase.instance.reference().child("Chats");
-    final DatabaseReference dbRefUser =
-        FirebaseDatabase.instance.reference().child('users');
-    List<Map<String, dynamic>> chatingUserList = [];
+  void startChatUser(){
+    DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
 
-    // getting all chat message that receive and send by me
-    await dbRefChat.onValue.listen((event) {
-      if (event.snapshot.value != null) {
-        List<Map<String, dynamic>> chats = [];
-        Map values = event.snapshot.value as Map;
-        values.forEach((key, value) {
-          chats.add(Map<String, dynamic>.from(value));
+    List<Map<String, dynamic>> _chatingUserListFull = [];
+    Query query = _dbRef.child('Chats').orderByChild('timeStamp');
+
+    query.onValue.listen((event) {
+      List<Map<String, dynamic>> _chatingUserList = [];
+      _chatingUserList.clear(); // Clear the list before adding new values
+
+      Map chatingUser = event.snapshot.value as Map;
+
+
+        List<MapEntry<dynamic, dynamic>> entries = chatingUser.entries.toList();
+
+        entries.sort((a, b) {
+          // Compare the "timeStamp" values for sorting
+          int timeStampA = a.value['timeStamp'];
+          int timeStampB = b.value['timeStamp'];
+          return timeStampA.compareTo(timeStampB);
         });
-        //// if we get all chat message next check sender or receiver is me b/c that means we start chat
-        List<Map<String, dynamic>> chatingUserListR = [];
-        chatingUserListR.clear();
-        for (int i = 0; i < chats.length; i++) {
-          if (chats[i]['sender'] == uid || chats[i]['receive'] == uid) {
-            String friend;
-            if (chats[i]['sender'] == uid) {
-              friend = chats[i]['receiver'];
-            } else {
-              friend = chats[i]['sender'];
-            }
-            Map<String, dynamic> chatingUser = {
-              'message': chats[i]['message'],
-              'timeStamp': chats[i]['timeStamp'],
-              'friend': friend,
-            };
 
-            chatingUserListR.add(chatingUser);
+        for (int i = 0; i < entries.length; i++) {
+          MapEntry<dynamic, dynamic> entry = entries[i];
+          Map<String, dynamic> value = Map<String, dynamic>.from(entry.value);
+          // get user that sender is me or the message receive to me
+          if (value['sender'] == uid || value['receiver'] == uid) {
+            _chatingUserList.add(value);
+
           }
         }
-        setState(() {
-          chatingUserList = chatingUserListR;
-        });
+        // start doing reverse the list. b/c the order is set by older to latest so i want to first latest
+      _chatingUserList = _chatingUserList.reversed.toList();
+        // and after reverse i need to remove duplicated id. b/c no need of duplicated user
+      Set<String> uniqueIds = Set<String>();
+      List<Map<String, dynamic>> newList = [];
+
+      for (Map<String, dynamic> user in _chatingUserList) {
+        String friend;
+        if(user['sender'] == uid){
+          friend = user['receiver'];
+        }else{
+          friend = user['sender'];
+        }
+
+        // Check if the ID is already present in the set
+        if (!uniqueIds.contains(friend)) {
+          // If not, add it to the set and include the user in the new list
+          uniqueIds.add(friend);
+          newList.add(user);
+        }
+        // If the ID is already present, it's a duplicate and can be skipped
       }
+
+      // Update the original list with the new list
+      _chatingUserList.clear();
+      _chatingUserList.addAll(newList);
+      for (int i = 0; i < _chatingUserList.length; i++) {
+        // Process the filtered and ordered data here
+        String friend;
+        if(_chatingUserList[i]['sender'] == uid){
+          friend = _chatingUserList[i]['receiver'];
+        }else{
+          friend = _chatingUserList[i]['sender'];
+        }
+        Map<String , dynamic> chatInfo = {
+          'message' : _chatingUserList[i]['message'],
+          'timeStamp' : _chatingUserList[i]['timeStamp'],
+          'friend' : friend,
+
+        };
+        _chatingUserListFull.add(chatInfo);
+      }
+
+
     });
-    // geting filter only Chat with me contact not duplicated user
-    await dbRefUser.once().then((event) {
+
+    final DatabaseReference dbRefUser =
+    FirebaseDatabase.instance.reference().child('users');
+
+    dbRefUser.once().then((event) {
       if (event.snapshot.value != null) {
         List<Map<String, dynamic>> usersListR = [];
         Map usersMap = event.snapshot.value as Map;
@@ -115,50 +152,28 @@ class _SubjectUserListState extends State<SubjectUserList> {
           Map<String, dynamic> user = Map<String, dynamic>.from(value);
           usersListR.add(user);
         });
-        // createing getting receiver for loop map variable
-        List<Map<String, dynamic>> filterChatingFinalR = [];
-        filterChatingFinalR.clear();
-        // checking userid = starting chat friend id. b/c to get name and profile pic from that id then display in to start chat page
-        for (int i = 0; i < usersListR.length; i++) {
-          for (int ii = 0; ii < chatingUserList.length; ii++) {
-            if (usersListR[i]['uid'] == chatingUserList[ii]['friend']) {
-              Map<String, dynamic> filterUser = {
-                'uid': usersListR[i]['uid'],
+        List<Map<String, dynamic>> tempList = [];
+        tempList.clear();
+        for(int i = 0; i < usersListR.length; i++){
+          for(int j = 0; j < _chatingUserListFull.length; j++){
+            if(usersListR[i]['uid'] == _chatingUserListFull[j]['friend']){
+              Map<String, dynamic> temp = {
                 'name': usersListR[i]['name'],
                 'profilePic': usersListR[i]['profilePic'],
-                'message': chatingUserList[ii]['message'],
-                'timeStamp': chatingUserList[ii]['timeStamp'],
+                'message': _chatingUserListFull[j]['message'],
+                'timeStamp': _chatingUserListFull[j]['timeStamp'],
+                'friend': _chatingUserListFull[j]['friend'],
               };
-              filterChatingFinalR.add(filterUser);
+              tempList.add(temp);
             }
           }
         }
         setState(() {
-          filterChatingFinal = filterChatingFinalR;
-          removeDuplicateIds();
+          filterChatingFinal = tempList;
         });
       }
+
     });
-  }
 
-  void removeDuplicateIds()   {
-    Set<String> uniqueIds = Set<String>();
-    List<Map<String, dynamic>> newList = [];
-
-    for (Map<String, dynamic> user in filterChatingFinal) {
-      String uid = user['uid'];
-
-      // Check if the ID is already present in the set
-      if (!uniqueIds.contains(uid)) {
-        // If not, add it to the set and include the user in the new list
-        uniqueIds.add(uid);
-        newList.add(user);
-      }
-      // If the ID is already present, it's a duplicate and can be skipped
-    }
-
-    // Update the original list with the new list
-    filterChatingFinal.clear();
-    filterChatingFinal.addAll(newList);
   }
 }

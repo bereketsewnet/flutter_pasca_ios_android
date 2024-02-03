@@ -1,26 +1,6 @@
 
 
-import 'package:flutter/material.dart';
-import 'package:pasca/second_code_test.dart';
 
-class YourCustomWidget extends StatelessWidget {
-  final List<UserData> userData;
-
-  YourCustomWidget({required this.userData});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: userData.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text('Name: ${userData[index].name}'),
-          subtitle: Text('Email: ${userData[index].email}'),
-        );
-      },
-    );
-  }
-}
 
 
 

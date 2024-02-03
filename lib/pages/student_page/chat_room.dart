@@ -43,7 +43,6 @@ class _ChatRoomState extends State<ChatRoom> {
     // getting my id
     setState(() {
       uid = _uid;
-
     });
   }
 
@@ -92,10 +91,14 @@ class _ChatRoomState extends State<ChatRoom> {
                 // check message sender to my id b/c to put on the right side ot message
                 final bool isMe = users['sender'] == uid;
                 // check if message send by me or receive by me b/c in chat room display on my massage and friend message
-                if(users['sender'] == uid && users['receiver'] == widget.friendId || users['sender'] == widget.friendId && users['receiver'] == uid){
+                if (users['sender'] == uid &&
+                        users['receiver'] == widget.friendId ||
+                    users['sender'] == widget.friendId &&
+                        users['receiver'] == uid) {
+
                   return Align(
                     alignment:
-                    isMe ? Alignment.centerRight : Alignment.centerLeft,
+                        isMe ? Alignment.centerRight : Alignment.centerLeft,
                     child: ChatMessageList(
                       // this is list item inside containt if it is me change border, alignment , and color based on bool answer
                       message: users['message'],
@@ -109,7 +112,7 @@ class _ChatRoomState extends State<ChatRoom> {
                           ? CustomColors.fourthColor
                           : CustomColors.primaryColor,
                       inSideContaintAlign:
-                      isMe ? const Alignment(1, 0) : const Alignment(-1, 0),
+                          isMe ? const Alignment(1, 0) : const Alignment(-1, 0),
                     ),
                   );
                 }
@@ -208,11 +211,7 @@ class _ChatRoomState extends State<ChatRoom> {
     String friendId = widget.friendId;
     String message = _messageController.text;
     String myId = await SharedPref().getUid() ?? uid;
-    DateTime now = DateTime.now();
-    var format = DateFormat('HH:mm');
-    String timeStamp = format.format(now);
-    DatabaseReference dbRef =
-        FirebaseDatabase.instance.ref();
+    DatabaseReference dbRef = FirebaseDatabase.instance.ref();
 
     if (message.isNotEmpty && message != ' ' && message != '  ') {
       // chat info map or object
@@ -220,7 +219,7 @@ class _ChatRoomState extends State<ChatRoom> {
         'message': message,
         'sender': myId,
         'receiver': friendId,
-        'timeStamp': timeStamp,
+        'timeStamp': ServerValue.timestamp,
       };
       // inserting chat data
       dbRef.child('Chats').push().set(chatData).then((_) {
@@ -229,21 +228,6 @@ class _ChatRoomState extends State<ChatRoom> {
       }).catchError((error) {
         showSnackBar(context, 'Error inserting data: $error');
       });
-
-      Map<String ,dynamic> chat_list = {
-        'lastMessage' : message,
-        'lastTimeStamp' : timeStamp,
-      };
-
-      dbRef.child('ChatList/$uid/$friendId').set(chat_list).then((_) {
-
-
-      }).catchError((error) {
-        showSnackBar(context, error.toString());
-      });
-
-
-
     }
   }
 }

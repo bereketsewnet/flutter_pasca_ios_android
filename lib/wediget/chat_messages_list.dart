@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ChatMessageList extends StatelessWidget {
   ChatMessageList({
@@ -13,7 +14,7 @@ class ChatMessageList extends StatelessWidget {
   });
 
   String message;
-  String timeStamp;
+  int timeStamp;
   Color backColor;
   Color textColor;
   double RBL;
@@ -23,6 +24,12 @@ class ChatMessageList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    // Convert timestamp to a DateTime object
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timeStamp);
+
+    // Format the DateTime object to a string
+    String formattedTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
+
     return Row(
         mainAxisAlignment: inSideContaintAlign == Alignment.centerLeft
             ? MainAxisAlignment.start
@@ -55,7 +62,7 @@ class ChatMessageList extends StatelessWidget {
                     Align(
                       alignment: inSideContaintAlign,
                       child: Text(
-                        timeStamp,
+                        formattedTime,
                         style: TextStyle(color: textColor),
                       ),
                     ),
