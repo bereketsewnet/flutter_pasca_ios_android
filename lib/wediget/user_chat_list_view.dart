@@ -8,7 +8,7 @@ import '../pages/student_page/chat_room.dart';
 class StartchatUserList extends StatelessWidget {
   StartchatUserList(this.chatingUsers);
 
-  Map<String, dynamic> chatingUsers;
+  Map<dynamic, dynamic> chatingUsers;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class StartchatUserList extends StatelessWidget {
         DateTime.fromMillisecondsSinceEpoch(chatingUsers['timeStamp']);
 
     // Format the DateTime object to a string
-    String formattedTime = DateFormat('HH:mm').format(dateTime);
+    String formattedTime = DateFormat('h:mm a').format(dateTime);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       decoration: BoxDecoration(

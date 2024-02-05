@@ -31,11 +31,21 @@ class _ChatRoomState extends State<ChatRoom> {
   final TextEditingController _messageController = TextEditingController();
   final Query _dbRef = FirebaseDatabase.instance.ref().child('Chats');
   String uid = '';
+  List<Map<String, dynamic>> chatMessageList = [];
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+
     fetchData();
+    readMessage();
+    // Set up the onChildAdded listener
+    _dbRef.onChildAdded.listen((event) {
+      // Handle the new child node added
+      scrollToBottom();
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    });
   }
 
   void fetchData() async {
@@ -47,8 +57,16 @@ class _ChatRoomState extends State<ChatRoom> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _messageController.dispose();
+    _scrollController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: CustomColors.primaryColor,
       appBar: AppBar(
@@ -83,43 +101,51 @@ class _ChatRoomState extends State<ChatRoom> {
       body: Column(
         children: [
           Expanded(
-            child: FirebaseAnimatedList(
-              query: _dbRef,
-              itemBuilder: (BuildContext context, DataSnapshot snapshot,
-                  Animation<double> animation, int index) {
-                Map users = snapshot.value as Map;
-                // check message sender to my id b/c to put on the right side ot message
-                final bool isMe = users['sender'] == uid;
-                // check if message send by me or receive by me b/c in chat room display on my massage and friend message
-                if (users['sender'] == uid &&
-                        users['receiver'] == widget.friendId ||
-                    users['sender'] == widget.friendId &&
-                        users['receiver'] == uid) {
-
-                  return Align(
-                    alignment:
-                        isMe ? Alignment.centerRight : Alignment.centerLeft,
-                    child: ChatMessageList(
-                      // this is list item inside containt if it is me change border, alignment , and color based on bool answer
-                      message: users['message'],
-                      timeStamp: users['timeStamp'],
-                      RBL: isMe ? 20 : 3,
-                      RBR: isMe ? 3 : 20,
-                      backColor: isMe
-                          ? CustomColors.secondaryColor
-                          : CustomColors.fourthColor,
-                      textColor: isMe
-                          ? CustomColors.fourthColor
-                          : CustomColors.primaryColor,
-                      inSideContaintAlign:
-                          isMe ? const Alignment(1, 0) : const Alignment(-1, 0),
-                    ),
-                  );
-                }
-                // if no message send me and myfriend it will return null container
-                return Container();
-              },
-            ),
+            child: chatMessageList.isNotEmpty
+                ? ListView.builder(
+                    controller: _scrollController,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: chatMessageList.length,
+                    itemBuilder: (contex, index) {
+                      Map<dynamic, dynamic> users = chatMessageList[index];
+                      // check message sender to my id b/c to put on the right side ot message
+                      final bool isMe = users['sender'] == uid;
+                      return Align(
+                        alignment:
+                            isMe ? Alignment.centerRight : Alignment.centerLeft,
+                        child: ChatMessageList(
+                          // this is list item inside containt if it is me change border, alignment , and color based on bool answer
+                          message: users['message'],
+                          timeStamp: users['timeStamp'],
+                          RBL: isMe ? 10 : 0,
+                          RBR: isMe ? 0 : 10,
+                          Margin: isMe
+                              ? const EdgeInsets.only(
+                                  left: 40,
+                                  top: 5,
+                                  right: 8,
+                                  bottom: 3,
+                                )
+                              : const EdgeInsets.only(
+                                  right: 40,
+                                  top: 10,
+                                  left: 8,
+                                  bottom: 3,
+                                ),
+                          backColor: isMe
+                              ? CustomColors.secondaryColor
+                              : CustomColors.fourthColor,
+                          textColor: isMe
+                              ? CustomColors.fourthColor
+                              : CustomColors.primaryColor,
+                          inSideContaintAlign: isMe
+                              ? const Alignment(1, 0)
+                              : const Alignment(-1, 0),
+                        ),
+                      );
+                    },
+                  )
+                : Container(),
           ),
           Align(
             alignment: Alignment.bottomCenter,
@@ -204,7 +230,42 @@ class _ChatRoomState extends State<ChatRoom> {
     );
   }
 
-  void sendMessage() async {
+  void readMessage() {
+    final DatabaseReference dbRef = FirebaseDatabase.instance.ref();
+    List<Map<String, dynamic>> chatMessageListR = [];
+
+    dbRef.child('Chats').orderByChild('timeStamp').onValue.listen((event) {
+      Map<dynamic, dynamic> chatMessage =
+          event.snapshot.value as Map<dynamic, dynamic>;
+      chatMessageList.clear();
+      chatMessageListR.clear();
+      List<MapEntry<dynamic, dynamic>> entries = chatMessage.entries.toList();
+
+      entries.sort((a, b) {
+        // Compare the "timeStamp" values for sorting
+        int timeStampA = a.value['timeStamp'];
+        int timeStampB = b.value['timeStamp'];
+        return timeStampA.compareTo(timeStampB);
+      });
+      for (int i = 0; i < entries.length; i++) {
+        MapEntry<dynamic, dynamic> entry = entries[i];
+        Map<String, dynamic> value = Map<String, dynamic>.from(entry.value);
+        // get user that sender is me or the message receive to me
+        if (value['sender'] == uid && value['receiver'] == widget.friendId ||
+            value['sender'] == widget.friendId && value['receiver'] == uid) {
+          chatMessageListR.add(value);
+        }
+        setState(() {
+          chatMessageList = chatMessageListR;
+        });
+        print('readMessage');
+      }
+    }).onError((error) {
+      showSnackBar(context, error.toString());
+    });
+  }
+
+  Future<void> sendMessage() async {
     // geting all nessasry info for send message e.g uid, friendId, message,date,database e.t.c .....
     User? user = FirebaseAuth.instance.currentUser;
     String uid = user!.uid;
@@ -222,12 +283,92 @@ class _ChatRoomState extends State<ChatRoom> {
         'timeStamp': ServerValue.timestamp,
       };
       // inserting chat data
-      dbRef.child('Chats').push().set(chatData).then((_) {
+      await dbRef.child('Chats').push().set(chatData).then((_) {
         // handle code when data inserted
-        _messageController.text = '';
+        setState(() {
+          _messageController.clear();
+        });
       }).catchError((error) {
         showSnackBar(context, 'Error inserting data: $error');
       });
     }
   }
+
+  Future<void> scrollToBottom() async {
+    // _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+
+    await Future.delayed(const Duration(milliseconds: 100), () {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeOut,
+      );
+    });
+  }
 }
+
+// FirebaseAnimatedList(
+// query: _dbRef,
+// itemBuilder: (BuildContext context, DataSnapshot snapshot,
+// Animation<double> animation, int index) {
+// Map users = snapshot.value as Map;
+// // check message sender to my id b/c to put on the right side ot message
+// final bool isMe = users['sender'] == uid;
+// // check if message send by me or receive by me b/c in chat room display on my massage and friend message
+// if (users['sender'] == uid &&
+// users['receiver'] == widget.friendId ||
+// users['sender'] == widget.friendId &&
+// users['receiver'] == uid) {
+// return Align(
+// alignment:
+// isMe ? Alignment.centerRight : Alignment.centerLeft,
+// child: ChatMessageList(
+// // this is list item inside containt if it is me change border, alignment , and color based on bool answer
+// message: users['message'],
+// timeStamp: users['timeStamp'],
+// RBL: isMe ? 20 : 3,
+// RBR: isMe ? 3 : 20,
+// backColor: isMe
+// ? CustomColors.secondaryColor
+//     : CustomColors.fourthColor,
+// textColor: isMe
+// ? CustomColors.fourthColor
+//     : CustomColors.primaryColor,
+// inSideContaintAlign:
+// isMe ? const Alignment(1, 0) : const Alignment(-1, 0),
+// ),
+// );
+// }
+// // if no message send me and myfriend it will return null container
+// return Container();
+// },
+// ),
+
+// ListView.builder(
+// controller: _scrollController,
+// itemCount: chatMessageList.length,
+// itemBuilder: (contex, index) {
+// Map<dynamic, dynamic> users = chatMessageList[index] as Map;
+// // check message sender to my id b/c to put on the right side ot message
+// final bool isMe = users['sender'] == uid;
+// return Align(
+// alignment:
+// isMe ? Alignment.centerRight : Alignment.centerLeft,
+// child: ChatMessageList(
+// // this is list item inside containt if it is me change border, alignment , and color based on bool answer
+// message: users['message'],
+// timeStamp: users['timeStamp'],
+// RBL: isMe ? 20 : 3,
+// RBR: isMe ? 3 : 20,
+// backColor: isMe
+// ? CustomColors.secondaryColor
+//     : CustomColors.fourthColor,
+// textColor: isMe
+// ? CustomColors.fourthColor
+//     : CustomColors.primaryColor,
+// inSideContaintAlign:
+// isMe ? const Alignment(1, 0) : const Alignment(-1, 0),
+// ),
+// );
+// },
+// ),

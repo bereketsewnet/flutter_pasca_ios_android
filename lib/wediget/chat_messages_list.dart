@@ -11,6 +11,7 @@ class ChatMessageList extends StatelessWidget {
     required this.RBL,
     required this.RBR,
     required this.inSideContaintAlign,
+    required this.Margin,
   });
 
   String message;
@@ -19,6 +20,7 @@ class ChatMessageList extends StatelessWidget {
   Color textColor;
   double RBL;
   double RBR;
+  EdgeInsets Margin;
   Alignment inSideContaintAlign;
 
   @override
@@ -28,8 +30,8 @@ class ChatMessageList extends StatelessWidget {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timeStamp);
 
     // Format the DateTime object to a string
-    String formattedTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
-
+    String formattedTime = DateFormat('h:mm a MMM,d').format(dateTime);
+    // DateFormat('E,MMM d h:mma')
     return Row(
         mainAxisAlignment: inSideContaintAlign == Alignment.centerLeft
             ? MainAxisAlignment.start
@@ -38,13 +40,18 @@ class ChatMessageList extends StatelessWidget {
           Flexible(
             child: IntrinsicWidth(
               child: Container(
-                padding: const EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
-                margin: const EdgeInsets.all(10),
+                padding: const EdgeInsets.only(
+                  left: 10,
+                  right: 5,
+                  top: 5,
+                  bottom: 5,
+                ),
+                margin: Margin,
                 decoration: BoxDecoration(
                   color: backColor,
                   borderRadius: BorderRadius.only(
-                    topLeft: const Radius.circular(15),
-                    topRight: const Radius.circular(15),
+                    topLeft: const Radius.circular(10),
+                    topRight: const Radius.circular(10),
                     bottomLeft: Radius.circular(RBL),
                     bottomRight: Radius.circular(RBR),
                   ),
@@ -58,7 +65,7 @@ class ChatMessageList extends StatelessWidget {
                         style: TextStyle(color: textColor),
                       ),
                     ),
-                    SizedBox(height: 3),
+                    const SizedBox(height: 3),
                     Align(
                       alignment: inSideContaintAlign,
                       child: Text(
