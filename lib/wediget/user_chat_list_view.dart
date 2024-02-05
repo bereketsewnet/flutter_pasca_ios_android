@@ -66,79 +66,17 @@ class StartchatUserList extends StatelessWidget {
               Text(
                 chatingUsers['message'],
                 style: const TextStyle(
-                  color: CustomColors.fourthColor,
+                  color: CustomColors.thirdColor,
                 ),
               ),
             ],
           ),
           trailing: Text(
-            formattedTime ?? 'Grade',
-            style: const TextStyle(color: CustomColors.fourthColor),
+            formattedTime,
+            style: const TextStyle(color: CustomColors.thirdColor),
           ),
         ),
       ),
     );
   }
 }
-
-// Widget buildChatCard(Map<String, dynamic> chatingUsers) {
-//   // Customize the appearance of your chat card
-//
-//   // Convert timestamp to a DateTime object
-//   DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(chatingUsers['timeStamp']);
-//
-//   // Format the DateTime object to a string
-//   String formattedTime = DateFormat('HH:mm').format(dateTime);
-//   return Container(
-//     margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-//     decoration: BoxDecoration(
-//       color: CustomColors.secondaryColor,
-//       borderRadius: BorderRadius.circular(20),
-//       boxShadow: [
-//         BoxShadow(
-//           color: Colors.black.withOpacity(0.3),
-//           spreadRadius: 5,
-//           blurRadius: 15,
-//           offset: const Offset(0, 5),
-//         ),
-//       ],
-//     ),
-//     child: InkWell(
-//       onTap: () {
-//
-//       },
-//       child: ListTile(
-//         leading: CircleAvatar(
-//           backgroundImage: NetworkImage(
-//             chatingUsers['profilePic'] ??
-//                 'https://www.catholicsingles.com/wp-content/uploads/2020/06/blog-header-3.png',
-//           ),
-//           backgroundColor: CustomColors.secondaryColor,
-//           radius: 30,
-//         ),
-//         title: Text(
-//           chatingUsers['name'] ?? 'FullName',
-//           style: const TextStyle(
-//               fontWeight: FontWeight.bold,
-//               fontSize: 16,
-//               color: CustomColors.thirdColor),
-//         ),
-//         subtitle: Row(
-//           children: [
-//             const SizedBox(width: 3),
-//             Text(
-//               chatingUsers['message'],
-//               style: const TextStyle(
-//                 color: CustomColors.fourthColor,
-//               ),
-//             ),
-//           ],
-//         ),
-//         trailing: Text(
-//           formattedTime ?? 'Grade',
-//           style: const TextStyle(color: CustomColors.fourthColor),
-//         ),
-//       ),
-//     ),
-//   );
-// }

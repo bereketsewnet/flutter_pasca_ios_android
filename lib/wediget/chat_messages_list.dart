@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../assets/custom_colors/colors.dart';
+
 class ChatMessageList extends StatelessWidget {
   ChatMessageList({
     required this.message,
@@ -12,6 +14,8 @@ class ChatMessageList extends StatelessWidget {
     required this.RBR,
     required this.inSideContaintAlign,
     required this.Margin,
+    required this.isIconVisible,
+    required this.seenIcon,
   });
 
   String message;
@@ -22,6 +26,8 @@ class ChatMessageList extends StatelessWidget {
   double RBR;
   EdgeInsets Margin;
   Alignment inSideContaintAlign;
+  bool isIconVisible;
+  Icon seenIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +36,7 @@ class ChatMessageList extends StatelessWidget {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timeStamp);
 
     // Format the DateTime object to a string
-    String formattedTime = DateFormat('h:mm a MMM,d').format(dateTime);
+    String formattedTime = DateFormat('h:mma MMM,d').format(dateTime);
     // DateFormat('E,MMM d h:mma')
     return Row(
         mainAxisAlignment: inSideContaintAlign == Alignment.centerLeft
@@ -57,6 +63,7 @@ class ChatMessageList extends StatelessWidget {
                   ),
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Align(
                       alignment: inSideContaintAlign,
@@ -68,9 +75,19 @@ class ChatMessageList extends StatelessWidget {
                     const SizedBox(height: 3),
                     Align(
                       alignment: inSideContaintAlign,
-                      child: Text(
-                        formattedTime,
-                        style: TextStyle(color: textColor),
+                      child: Row(
+                        children: [
+                          Expanded(child: Container()),
+                          Text(
+                            formattedTime,
+                            style: TextStyle(color: textColor),
+                          ),
+                          const SizedBox(width: 2),
+                          Visibility(
+                            visible: isIconVisible,
+                            child: seenIcon,
+                          ),
+                        ],
                       ),
                     ),
                   ],

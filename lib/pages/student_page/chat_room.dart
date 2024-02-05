@@ -110,6 +110,7 @@ class _ChatRoomState extends State<ChatRoom> {
                       Map<dynamic, dynamic> users = chatMessageList[index];
                       // check message sender to my id b/c to put on the right side ot message
                       final bool isMe = users['sender'] == uid;
+                      final bool isSeen = users['isSeen'] == true;
                       return Align(
                         alignment:
                             isMe ? Alignment.centerRight : Alignment.centerLeft,
@@ -119,6 +120,18 @@ class _ChatRoomState extends State<ChatRoom> {
                           timeStamp: users['timeStamp'],
                           RBL: isMe ? 10 : 0,
                           RBR: isMe ? 0 : 10,
+                          isIconVisible: isMe ? true : false,
+                          seenIcon: isSeen
+                              ? const Icon(
+                                  Icons.done_all,
+                                  color: CustomColors.thirdColor,
+                                  size: 20,
+                                )
+                              : const Icon(
+                                  Icons.done,
+                                  color: CustomColors.thirdColor,
+                                  size: 20,
+                                ),
                           Margin: isMe
                               ? const EdgeInsets.only(
                                   left: 40,
@@ -134,10 +147,10 @@ class _ChatRoomState extends State<ChatRoom> {
                                 ),
                           backColor: isMe
                               ? CustomColors.secondaryColor
-                              : CustomColors.fourthColor,
+                              : CustomColors.thirdColor,
                           textColor: isMe
-                              ? CustomColors.fourthColor
-                              : CustomColors.primaryColor,
+                              ? CustomColors.thirdColor
+                              : CustomColors.secondaryColor,
                           inSideContaintAlign: isMe
                               ? const Alignment(1, 0)
                               : const Alignment(-1, 0),
@@ -257,8 +270,8 @@ class _ChatRoomState extends State<ChatRoom> {
         }
         setState(() {
           chatMessageList = chatMessageListR;
+          checkSeenMessage();
         });
-        print('readMessage');
       }
     }).onError((error) {
       showSnackBar(context, error.toString());
@@ -272,18 +285,21 @@ class _ChatRoomState extends State<ChatRoom> {
     String friendId = widget.friendId;
     String message = _messageController.text;
     String myId = await SharedPref().getUid() ?? uid;
-    DatabaseReference dbRef = FirebaseDatabase.instance.ref();
-
+    DatabaseReference dbRef =
+        FirebaseDatabase.instance.ref().child('Chats').push();
+    String? messageKey = dbRef.key;
     if (message.isNotEmpty && message != ' ' && message != '  ') {
       // chat info map or object
       Map<String, dynamic> chatData = {
         'message': message,
         'sender': myId,
+        'isSeen': false,
         'receiver': friendId,
         'timeStamp': ServerValue.timestamp,
+        'refkey': messageKey,
       };
       // inserting chat data
-      await dbRef.child('Chats').push().set(chatData).then((_) {
+      await dbRef.set(chatData).then((_) {
         // handle code when data inserted
         setState(() {
           _messageController.clear();
@@ -305,70 +321,18 @@ class _ChatRoomState extends State<ChatRoom> {
       );
     });
   }
+
+  void checkSeenMessage() {
+    DatabaseReference _dbRef = FirebaseDatabase.instance.ref().child('Chats');
+
+    // check all the list sender is my friend and receiver is me the chat update to isSeen ture;
+    for (int i = 0; i < chatMessageList.length; i++) {
+      if (chatMessageList[i]['sender'] == widget.friendId &&
+          chatMessageList[i]['receiver'] == uid) {
+        String messageKey = chatMessageList[i]['refkey'];
+        // update by the getting the key to true
+        _dbRef.child(messageKey).update({'isSeen': true});
+      }
+    }
+  }
 }
-
-// FirebaseAnimatedList(
-// query: _dbRef,
-// itemBuilder: (BuildContext context, DataSnapshot snapshot,
-// Animation<double> animation, int index) {
-// Map users = snapshot.value as Map;
-// // check message sender to my id b/c to put on the right side ot message
-// final bool isMe = users['sender'] == uid;
-// // check if message send by me or receive by me b/c in chat room display on my massage and friend message
-// if (users['sender'] == uid &&
-// users['receiver'] == widget.friendId ||
-// users['sender'] == widget.friendId &&
-// users['receiver'] == uid) {
-// return Align(
-// alignment:
-// isMe ? Alignment.centerRight : Alignment.centerLeft,
-// child: ChatMessageList(
-// // this is list item inside containt if it is me change border, alignment , and color based on bool answer
-// message: users['message'],
-// timeStamp: users['timeStamp'],
-// RBL: isMe ? 20 : 3,
-// RBR: isMe ? 3 : 20,
-// backColor: isMe
-// ? CustomColors.secondaryColor
-//     : CustomColors.fourthColor,
-// textColor: isMe
-// ? CustomColors.fourthColor
-//     : CustomColors.primaryColor,
-// inSideContaintAlign:
-// isMe ? const Alignment(1, 0) : const Alignment(-1, 0),
-// ),
-// );
-// }
-// // if no message send me and myfriend it will return null container
-// return Container();
-// },
-// ),
-
-// ListView.builder(
-// controller: _scrollController,
-// itemCount: chatMessageList.length,
-// itemBuilder: (contex, index) {
-// Map<dynamic, dynamic> users = chatMessageList[index] as Map;
-// // check message sender to my id b/c to put on the right side ot message
-// final bool isMe = users['sender'] == uid;
-// return Align(
-// alignment:
-// isMe ? Alignment.centerRight : Alignment.centerLeft,
-// child: ChatMessageList(
-// // this is list item inside containt if it is me change border, alignment , and color based on bool answer
-// message: users['message'],
-// timeStamp: users['timeStamp'],
-// RBL: isMe ? 20 : 3,
-// RBR: isMe ? 3 : 20,
-// backColor: isMe
-// ? CustomColors.secondaryColor
-//     : CustomColors.fourthColor,
-// textColor: isMe
-// ? CustomColors.fourthColor
-//     : CustomColors.primaryColor,
-// inSideContaintAlign:
-// isMe ? const Alignment(1, 0) : const Alignment(-1, 0),
-// ),
-// );
-// },
-// ),
