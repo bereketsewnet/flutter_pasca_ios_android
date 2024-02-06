@@ -22,13 +22,13 @@ class StartchatUserList extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       decoration: BoxDecoration(
         color: CustomColors.secondaryColor,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
-            spreadRadius: 5,
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+            spreadRadius: 3,
+            blurRadius: 25,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -47,8 +47,7 @@ class StartchatUserList extends StatelessWidget {
         child: ListTile(
           leading: CircleAvatar(
             backgroundImage: NetworkImage(
-              chatingUsers['profilePic'] ??
-                  'https://www.catholicsingles.com/wp-content/uploads/2020/06/blog-header-3.png',
+              chatingUsers['profilePic'] ?? '',
             ),
             backgroundColor: CustomColors.secondaryColor,
             radius: 30,

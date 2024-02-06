@@ -1,8 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pasca/pages/common_page/login_page.dart';
+import 'package:pasca/pages/common_page/register_page.dart';
+import 'package:pasca/pages/student_page/student_home_page.dart';
+import 'package:pasca/pages/student_page/subject_user_list.dart';
 import 'package:pasca/wediget/bottom_navigation.dart';
 import 'package:pasca/wediget/upper_tab_bar.dart';
+import 'code_test.dart';
 import 'methods/firebase_service/firebase_options.dart';
 
 void main() async {
@@ -22,7 +26,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
       ),
-      home:  LoginPage(),
+      home:  const StudentHomePage(),
     );
   }
 }

@@ -378,7 +378,7 @@ class _RegisterPageState extends State<RegisterPage> {
             'grade': grade,
             'type': type,
             'uid': uid,
-            'profilePic': 'default',
+            'profilePic': 'https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg',
           };
 
           // Insert the data at the generated reference

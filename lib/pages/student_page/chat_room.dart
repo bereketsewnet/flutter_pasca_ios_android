@@ -10,6 +10,7 @@ import 'package:pasca/methods/my_methods/shared_pref_method.dart';
 import 'package:pasca/wediget/chat_messages_list.dart';
 import 'package:pasca/wediget/snack_bar.dart';
 
+import '../../firebase_service/storage/upload_data.dart';
 import '../../second_code_test.dart';
 
 class ChatRoom extends StatefulWidget {
@@ -50,6 +51,8 @@ class _ChatRoomState extends State<ChatRoom> {
 
   void fetchData() async {
     String _uid = await SharedPref().getUid() ?? '';
+    // check profile pic is defalut one
+
     // getting my id
     setState(() {
       uid = _uid;
@@ -83,6 +86,7 @@ class _ChatRoomState extends State<ChatRoom> {
         title: Row(
           children: [
             CircleAvatar(
+              backgroundColor: Colors.transparent,
               backgroundImage: NetworkImage(
                   widget.profileImage), // get profile from chat list
             ),
@@ -195,7 +199,9 @@ class _ChatRoomState extends State<ChatRoom> {
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       prefixIcon: IconButton(
-                        onPressed: () {},
+                        onPressed: (){
+                          insetImageGalleryForProfile(context, uid);
+                        },
                         icon: const Icon(
                           Icons.photo_camera_outlined,
                           color: CustomColors.thirdColor,

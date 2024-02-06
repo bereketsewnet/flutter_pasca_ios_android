@@ -42,13 +42,16 @@ class _SubjectUserListState extends State<SubjectUserList> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CustomColors.primaryColor,
-      body: ListView.builder(
-        itemCount: filterChatingFinal.length,
-        itemBuilder: (context, index) {
-          Map<String, dynamic> starttingChatUsers = filterChatingFinal[index];
-          return StartchatUserList(starttingChatUsers);
-        },
-      ),
+      body: filterChatingFinal != null && filterChatingFinal.isNotEmpty
+          ? ListView.builder(
+              itemCount: filterChatingFinal.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> starttingChatUsers =
+                    filterChatingFinal[index];
+                return StartchatUserList(starttingChatUsers);
+              },
+            )
+          : Container(),
       floatingActionButton: FlotingButtom(
         onPressed: () {
           Navigator.push(
@@ -69,19 +72,20 @@ class _SubjectUserListState extends State<SubjectUserList> {
 
   // this function used for filter out chat with me and assign to filtetFilalList.
   Future<void> startChatUser() async {
+
     // reference of all realtime database base
     DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
 
     // store last chat to user by list of map
-    List<Map<String, dynamic>> _chatingUserListFull = [];
+    List<Map<String, dynamic>> chatingUserListFull = [];
     // first get order message by timeStamp and filter which one duplicated and get last message
     await _dbRef
         .child('Chats')
         .orderByChild('timeStamp')
-        .onValue
-        .listen((event) {
-      List<Map<String, dynamic>> _chatingUserList = [];
-      _chatingUserList.clear(); // Clear the list before adding new values
+        .once()
+        .then((event) {
+      List<Map<String, dynamic>> chatingUserList = [];
+      chatingUserList.clear(); // Clear the list before adding new values
 
       Map chatingUser = event.snapshot.value as Map;
 
@@ -99,16 +103,17 @@ class _SubjectUserListState extends State<SubjectUserList> {
         Map<String, dynamic> value = Map<String, dynamic>.from(entry.value);
         // get user that sender is me or the message receive to me
         if (value['sender'] == uid || value['receiver'] == uid) {
-          _chatingUserList.add(value);
+          chatingUserList.add(value);
+
         }
       }
       // start doing reverse the list. b/c the order is set by older to latest so i want to first latest
-      _chatingUserList = _chatingUserList.reversed.toList();
+      chatingUserList = chatingUserList.reversed.toList();
       // and after reverse i need to remove duplicated id. b/c no need of duplicated user
       Set<String> uniqueIds = Set<String>();
       List<Map<String, dynamic>> newList = [];
 
-      for (Map<String, dynamic> user in _chatingUserList) {
+      for (Map<String, dynamic> user in chatingUserList) {
         String friend;
         if (user['sender'] == uid) {
           friend = user['receiver'];
@@ -126,27 +131,27 @@ class _SubjectUserListState extends State<SubjectUserList> {
       }
 
       // Update the original list with the new list
-      _chatingUserList.clear();
-      _chatingUserList.addAll(newList);
-      for (int i = 0; i < _chatingUserList.length; i++) {
+      chatingUserList.clear();
+      chatingUserList.addAll(newList);
+      for (int i = 0; i < chatingUserList.length; i++) {
         // Process the filtered and ordered data here
         String friend;
-        if (_chatingUserList[i]['sender'] == uid) {
-          friend = _chatingUserList[i]['receiver'];
+        if (chatingUserList[i]['sender'] == uid) {
+          friend = chatingUserList[i]['receiver'];
         } else {
-          friend = _chatingUserList[i]['sender'];
+          friend = chatingUserList[i]['sender'];
         }
         Map<String, dynamic> chatInfo = {
-          'message': _chatingUserList[i]['message'],
-          'timeStamp': _chatingUserList[i]['timeStamp'],
+          'message': chatingUserList[i]['message'],
+          'timeStamp': chatingUserList[i]['timeStamp'],
           'friend': friend,
         };
-        _chatingUserListFull.add(chatInfo);
+        chatingUserListFull.add(chatInfo);
       }
     });
 
     // after geting filter out chat in this method get all nessary information about that user and the message
-    await _dbRef.child('users').once().then((event) {
+   await  _dbRef.child('users').once().then((event) {
       if (event.snapshot.value != null) {
         List<Map<String, dynamic>> usersListR = [];
         Map usersMap = event.snapshot.value as Map;
@@ -159,14 +164,14 @@ class _SubjectUserListState extends State<SubjectUserList> {
         List<Map<String, dynamic>> tempList = [];
         tempList.clear();
         for (int i = 0; i < usersListR.length; i++) {
-          for (int j = 0; j < _chatingUserListFull.length; j++) {
-            if (usersListR[i]['uid'] == _chatingUserListFull[j]['friend']) {
+          for (int j = 0; j < chatingUserListFull.length; j++) {
+            if (usersListR[i]['uid'] == chatingUserListFull[j]['friend']) {
               Map<String, dynamic> temp = {
                 'name': usersListR[i]['name'],
                 'profilePic': usersListR[i]['profilePic'],
-                'message': _chatingUserListFull[j]['message'],
-                'timeStamp': _chatingUserListFull[j]['timeStamp'],
-                'friend': _chatingUserListFull[j]['friend'],
+                'message': chatingUserListFull[j]['message'],
+                'timeStamp': chatingUserListFull[j]['timeStamp'],
+                'friend': chatingUserListFull[j]['friend'],
               };
               tempList.add(temp);
             }

@@ -37,8 +37,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
   void fetchData() async {
     String _name = await SharedPref().getName() ?? '';
     String _grade = await SharedPref().getGrade() ?? '';
-    String _profilePic = await SharedPref().getProfilePic() ??
-        'https://firebasestorage.googleapis.com/v0/b/pasca-ios-and-android-dc988.appspot.com/o/Leonardo_Diffusion_XL_very_beutifull_computer_programming_setu_7.jpg?alt=media&token=7c164fff-c657-40f7-9219-bbd587c36138';
+    String _profilePic = await SharedPref().getProfilePic() ?? '';
     // Once the values are retrieved, you can update your UI or perform any other actions
     setState(() {
       name = _name;

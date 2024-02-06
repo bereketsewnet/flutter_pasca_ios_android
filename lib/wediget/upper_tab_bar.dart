@@ -1,7 +1,3 @@
-import 'dart:math';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
@@ -9,8 +5,6 @@ import 'package:pasca/methods/my_methods/shared_pref_method.dart';
 import 'package:pasca/pages/common_page/all_users_list.dart';
 import 'package:pasca/pages/student_page/law.dart';
 import 'package:pasca/pages/student_page/subject_user_list.dart';
-import 'package:pasca/wediget/snack_bar.dart';
-import 'package:pasca/wediget/user_list_view.dart';
 
 class UpperTabBar extends StatefulWidget {
   @override
@@ -23,7 +17,9 @@ class _UpperTabBarState extends State<UpperTabBar> {
   String name = '';
   String grade = '';
   String uid = '';
+  String profilePic = '';
   int unreadCount = 0;
+  List<Map<dynamic, dynamic>> counterList = [];
 
   @override
   void initState() {
@@ -35,7 +31,7 @@ class _UpperTabBarState extends State<UpperTabBar> {
 
   void initializeTabs() {
     myTabs = [
-      Tab(text: 'Private-$unreadCount'),
+      Tab(text: 'Private $unreadCount'),
       const Tab(text: 'Public'),
     ];
   }
@@ -44,17 +40,18 @@ class _UpperTabBarState extends State<UpperTabBar> {
     String fetchedName = await SharedPref().getName() ?? '';
     String fetchedGrade = await SharedPref().getGrade() ?? '';
     String fetchedUid = await SharedPref().getUid() ?? '';
+    String fetchProfilePic = await SharedPref().getProfilePic() ?? '';
 
     setState(() {
       name = fetchedName;
       grade = fetchedGrade;
       uid = fetchedUid;
+      profilePic = fetchProfilePic;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
     return DefaultTabController(
       length: myTabs.length,
       child: Scaffold(
@@ -71,23 +68,25 @@ class _UpperTabBarState extends State<UpperTabBar> {
           ),
           title: Row(
             children: [
-              const CircleAvatar(
+               CircleAvatar(
                 radius: 20,
-                backgroundImage: NetworkImage(
-                    'https://www.catholicsingles.com/wp-content/uploads/2020/06/blog-header-3.png'),
+                backgroundImage: NetworkImage(profilePic),
+                 backgroundColor: Colors.transparent,
               ),
               Container(
-                margin: EdgeInsets.only(left: 10),
-                child:  Column(
+                margin: const EdgeInsets.only(left: 10),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       name,
-                      style: TextStyle(color: CustomColors.thirdColor, fontSize: 18),
+                      style: const TextStyle(
+                          color: CustomColors.thirdColor, fontSize: 18),
                     ),
                     Text(
                       'Class: $grade',
-                      style: const TextStyle(color: CustomColors.thirdColor, fontSize: 14),
+                      style: const TextStyle(
+                          color: CustomColors.thirdColor, fontSize: 14),
                     ),
                   ],
                 ),
@@ -97,15 +96,14 @@ class _UpperTabBarState extends State<UpperTabBar> {
           backgroundColor: CustomColors.primaryColor,
           bottom: TabBar(
             tabs: myTabs,
-            indicator: UnderlineTabIndicator(
-              borderSide: const BorderSide(
+            indicator: const UnderlineTabIndicator(
+              borderSide: BorderSide(
                 width: 2.0,
                 color: CustomColors.thirdColor,
               ),
-              insets: EdgeInsets.symmetric(horizontal: size.width / 10),
+              insets: EdgeInsets.symmetric(horizontal: 100),
             ),
             labelColor: CustomColors.thirdColor,
-
           ),
         ),
         body: const TabBarView(
@@ -117,30 +115,27 @@ class _UpperTabBarState extends State<UpperTabBar> {
       ),
     );
   }
-  void countUnreadMessage(){
+
+  void countUnreadMessage() {
     DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
-    List<Map<dynamic,dynamic>> counterList = [];
-    counterList.clear();
+    List<Map<dynamic, dynamic>> counterListR = [];
+    counterListR.clear();
 
     _dbRef.child('Chats').once().then((event) {
       Map<dynamic, dynamic> counter = event.snapshot.value as Map;
 
       counter.forEach((key, value) {
-        if(value['receiver'] == uid && value['isSeen'] == false){
-          counterList.add(Map<dynamic, dynamic>.from(value));
+        if (value['receiver'] == uid && value['isSeen'] == false) {
+          counterListR.add(Map<dynamic, dynamic>.from(value));
         }
       });
 
-     setState(() {
-       unreadCount = counterList.length;
-       initializeTabs(); // Update the tabs with the new unread count
-     });
-
-
-
-    }).catchError((error){
-
-    });
+      setState(() {
+        unreadCount = counterListR.length;
+        initializeTabs(); // Update the tabs with the new unread count
+        counterList = counterListR;
+      });
+    }).catchError((error) {});
 
     // Also listen for changes in the database and update the count accordingly
     _dbRef.child('Chats').onChildChanged.listen((event) {
@@ -149,13 +144,14 @@ class _UpperTabBarState extends State<UpperTabBar> {
       // Update the logic based on your database structure and how you mark messages as read
       // For demonstration purposes, assuming there's an 'isSeen' field in the message
       Map<dynamic, dynamic> changedMessage = event.snapshot.value as Map;
-      if (changedMessage['receiver'] == uid && changedMessage['isSeen'] == true) {
+      if (changedMessage['receiver'] == uid &&
+          changedMessage['isSeen'] == true) {
         setState(() {
-          countUnreadMessage(); // Ensure unreadCount is not negative
+          unreadCount--; // Decrease the count as the message is marked as seen
+          // countUnreadMessage();
           initializeTabs();
         });
       }
     });
-
   }
 }
