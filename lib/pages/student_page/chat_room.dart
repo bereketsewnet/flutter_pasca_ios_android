@@ -11,6 +11,7 @@ import 'package:pasca/wediget/chat_messages_list.dart';
 import 'package:pasca/wediget/snack_bar.dart';
 
 import '../../firebase_service/storage/upload_data.dart';
+import '../../methods/my_methods/check_internt_status.dart';
 import '../../second_code_test.dart';
 
 class ChatRoom extends StatefulWidget {
@@ -45,8 +46,9 @@ class _ChatRoomState extends State<ChatRoom> {
     _dbRef.onChildAdded.listen((event) {
       // Handle the new child node added
       scrollToBottom();
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    //  _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
+    checkConnectivity();
   }
 
   void fetchData() async {

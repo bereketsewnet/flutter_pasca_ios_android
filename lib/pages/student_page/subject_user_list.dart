@@ -8,6 +8,7 @@ import 'package:pasca/pages/student_page/student_home_page.dart';
 import 'package:pasca/wediget/snack_bar.dart';
 import 'package:pasca/wediget/user_list_view.dart';
 
+import '../../methods/my_methods/check_internt_status.dart';
 import '../../methods/my_methods/shared_pref_method.dart';
 import '../../wediget/floting_action_buttom.dart';
 import '../../wediget/user_chat_list_view.dart';
@@ -28,6 +29,7 @@ class _SubjectUserListState extends State<SubjectUserList> {
     super.initState();
     fetchData();
     startChatUser();
+    checkConnectivity();
   }
 
   void fetchData() async {

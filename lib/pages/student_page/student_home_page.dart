@@ -14,6 +14,8 @@ import 'package:pasca/wediget/custom_button.dart';
 import 'package:pasca/wediget/normal_button.dart';
 import 'package:pasca/wediget/upper_tab_bar.dart';
 
+import '../../methods/my_methods/check_internt_status.dart';
+import '../../methods/my_methods/lifecycle_observer.dart';
 import '../../wediget/snack_bar.dart';
 
 class StudentHomePage extends StatefulWidget {
@@ -27,11 +29,12 @@ class _StudentHomePageState extends State<StudentHomePage> {
   String name = '';
   String grade = '';
   String profilePic = '';
-
   @override
   void initState() {
     super.initState();
+    print('init');
     fetchData();
+    checkConnectivity();
   }
 
   void fetchData() async {
@@ -98,6 +101,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
       },
     },
   ];
+
 
   final CarouselController carouselController = CarouselController();
   final CarouselController carouselControllerLowerSlider = CarouselController();
@@ -203,7 +207,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                                   right: 15, bottom: 5, top: 20),
                               child: CircleAvatar(
                                 radius: 50, // Adjust the radius as needed
-                                backgroundImage: NetworkImage(profilePic),
+                                backgroundImage: profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
                                 backgroundColor: Colors
                                     .transparent, // Provide the image path
                               ),

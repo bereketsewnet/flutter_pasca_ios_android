@@ -98,12 +98,12 @@ class _UpperTabBarState extends State<UpperTabBar> {
             tabs: myTabs,
             indicator: const UnderlineTabIndicator(
               borderSide: BorderSide(
-                width: 2.0,
+                width: 3.0,
                 color: CustomColors.thirdColor,
               ),
-              insets: EdgeInsets.symmetric(horizontal: 100),
             ),
             labelColor: CustomColors.thirdColor,
+            unselectedLabelColor: CustomColors.fourthColor,
           ),
         ),
         body: const TabBarView(
