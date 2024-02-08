@@ -9,7 +9,6 @@ Future<void> checkConnectivity() async {
   if (connectivityResult == ConnectivityResult.none && connectivityResult != ConnectivityResult.bluetooth) {
     // No internet connection
     try {
-      dbRef.child(uid).update({'isOnline' : false});
       print('Offline');
     }catch (error){
       print(error);
@@ -18,7 +17,6 @@ Future<void> checkConnectivity() async {
   } else {
     // Internet connection available
     try {
-      dbRef.child(uid).update({'isOnline' : true});
       print('Online');
     }catch (error){
       print(error);

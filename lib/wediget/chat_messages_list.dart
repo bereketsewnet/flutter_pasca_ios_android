@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../assets/custom_colors/colors.dart';
 
@@ -16,6 +18,7 @@ class ChatMessageList extends StatelessWidget {
     required this.Margin,
     required this.isIconVisible,
     required this.seenIcon,
+    required this.messageType,
   });
 
   String message;
@@ -28,6 +31,7 @@ class ChatMessageList extends StatelessWidget {
   Alignment inSideContaintAlign;
   bool isIconVisible;
   Icon seenIcon;
+  String messageType;
 
   @override
   Widget build(BuildContext context) {
@@ -67,10 +71,24 @@ class ChatMessageList extends StatelessWidget {
                   children: [
                     Align(
                       alignment: inSideContaintAlign,
-                      child: Text(
-                        message,
-                        style: TextStyle(color: textColor),
-                      ),
+                      child: messageType == 'Text'
+                          ? Text(
+                              message,
+                              style: TextStyle(color: textColor),
+                            )
+                          : SizedBox(
+                              width: 200,
+                              child: CachedNetworkImage(
+                                imageUrl: message,
+                                // Replace the URL above with the actual URL of your image
+                                placeholder: (context, url) => SpinKitThreeBounce(
+                                  color: CustomColors.thirdColor,
+                                  size: size.width / 8,
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                              ),
+                            ),
                     ),
                     const SizedBox(height: 3),
                     Align(

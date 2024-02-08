@@ -147,6 +147,7 @@ class _SubjectUserListState extends State<SubjectUserList> {
           'message': chatingUserList[i]['message'],
           'timeStamp': chatingUserList[i]['timeStamp'],
           'friend': friend,
+          'messageType' : chatingUserList[i]['messageType'],
         };
         chatingUserListFull.add(chatInfo);
       }
@@ -174,6 +175,7 @@ class _SubjectUserListState extends State<SubjectUserList> {
                 'message': chatingUserListFull[j]['message'],
                 'timeStamp': chatingUserListFull[j]['timeStamp'],
                 'friend': chatingUserListFull[j]['friend'],
+                'messageType' : chatingUserListFull[j]['messageType'],
               };
               tempList.add(temp);
             }

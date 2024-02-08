@@ -32,7 +32,6 @@ class _StudentHomePageState extends State<StudentHomePage> {
   @override
   void initState() {
     super.initState();
-    print('init');
     fetchData();
     checkConnectivity();
   }

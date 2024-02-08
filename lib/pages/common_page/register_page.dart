@@ -163,15 +163,15 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     child: DropdownButton(
                       dropdownColor: CustomColors.primaryColor,
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.arrow_circle_down,
                         color: CustomColors.thirdColor,
                       ),
-                      style: TextStyle(color: CustomColors.thirdColor),
+                      style: const TextStyle(color: CustomColors.thirdColor),
                       iconSize: 20,
                       isExpanded: true,
-                      underline: SizedBox(),
-                      hint: Text(
+                      underline: const SizedBox(),
+                      hint: const Text(
                         'User Type',
                         style: TextStyle(
                           color: CustomColors.thirdColor,

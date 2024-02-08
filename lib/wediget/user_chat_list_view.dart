@@ -15,6 +15,7 @@ class StartchatUserList extends StatelessWidget {
     // Convert timestamp to a DateTime object
     DateTime dateTime =
         DateTime.fromMillisecondsSinceEpoch(chatingUsers['timeStamp']);
+    print(chatingUsers['messageType']);
 
     // Format the DateTime object to a string
     String formattedTime = DateFormat('h:mm a').format(dateTime);
@@ -62,10 +63,21 @@ class StartchatUserList extends StatelessWidget {
           subtitle: Row(
             children: [
               const SizedBox(width: 3),
-              Text(
-                chatingUsers['message'],
-                style: const TextStyle(
-                  color: CustomColors.thirdColor,
+              Expanded(
+                child: chatingUsers['messageType'] == 'Text'? Text(
+                  chatingUsers['message'],
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: const TextStyle(
+                    color: CustomColors.thirdColor,
+                  ),
+                ): const Text(
+                  'Image',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: CustomColors.thirdColor,
+                  ),
                 ),
               ),
             ],

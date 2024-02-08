@@ -70,7 +70,7 @@ class _UpperTabBarState extends State<UpperTabBar> {
             children: [
                CircleAvatar(
                 radius: 20,
-                backgroundImage: NetworkImage(profilePic),
+                backgroundImage: profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
                  backgroundColor: Colors.transparent,
               ),
               Container(

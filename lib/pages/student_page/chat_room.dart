@@ -123,6 +123,7 @@ class _ChatRoomState extends State<ChatRoom> {
                         child: ChatMessageList(
                           // this is list item inside containt if it is me change border, alignment , and color based on bool answer
                           message: users['message'],
+                          messageType: users['messageType'],
                           timeStamp: users['timeStamp'],
                           RBL: isMe ? 10 : 0,
                           RBR: isMe ? 0 : 10,
@@ -202,7 +203,7 @@ class _ChatRoomState extends State<ChatRoom> {
                       border: InputBorder.none,
                       prefixIcon: IconButton(
                         onPressed: (){
-                          insetImageGalleryForProfile(context, uid);
+                          insetImageGalleryForChat(context, uid, widget.friendId);
                         },
                         icon: const Icon(
                           Icons.photo_camera_outlined,
@@ -305,6 +306,7 @@ class _ChatRoomState extends State<ChatRoom> {
         'receiver': friendId,
         'timeStamp': ServerValue.timestamp,
         'refkey': messageKey,
+        'messageType' : 'Text',
       };
       // inserting chat data
       await dbRef.set(chatData).then((_) {
