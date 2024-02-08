@@ -43,8 +43,7 @@ class UsersListView extends StatelessWidget {
         child: ListTile(
           leading: CircleAvatar(
             backgroundImage: NetworkImage(
-              users['profilePic'] ??
-                  'https://www.catholicsingles.com/wp-content/uploads/2020/06/blog-header-3.png',
+              users['profilePic'],
             ),
             backgroundColor: CustomColors.secondaryColor,
             radius: 30,
@@ -60,7 +59,7 @@ class UsersListView extends StatelessWidget {
             children: [
               const SizedBox(width: 3),
               Text(
-                users['type'],
+                users['type'] ?? 'type',
                 style: const TextStyle(
                   color: CustomColors.fourthColor,
                 ),

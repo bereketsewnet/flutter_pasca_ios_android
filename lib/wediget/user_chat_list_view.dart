@@ -15,7 +15,6 @@ class StartchatUserList extends StatelessWidget {
     // Convert timestamp to a DateTime object
     DateTime dateTime =
         DateTime.fromMillisecondsSinceEpoch(chatingUsers['timeStamp']);
-    print(chatingUsers['messageType']);
 
     // Format the DateTime object to a string
     String formattedTime = DateFormat('h:mm a').format(dateTime);

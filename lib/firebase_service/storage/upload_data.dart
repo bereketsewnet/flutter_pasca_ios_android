@@ -65,7 +65,7 @@ Future<void> insetImageGalleryForChat(
           // put file in to base on reference and change the form in to image/jpeg.
           File(file!.path),
           SettableMetadata(
-              contentType: 'image/jpeg'), // Set the appropriate content type
+              contentType: 'image/jpeg',), // Set the appropriate content type
         );
 
     // store image address in to image url to string

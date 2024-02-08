@@ -12,8 +12,15 @@ import 'methods/firebase_service/firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+      options: const FirebaseOptions(
+    apiKey: 'AIzaSyDL8gqF8DVeVhBguAfqJB4UGi51mFxTvMw',
+    appId: '1:824091918512:ios:4ace7276b85a73aa267b75',
+    messagingSenderId: '824091918512',
+    projectId: 'pasca-ios-and-android-dc988',
+    storageBucket: 'pasca-ios-and-android-dc988.appspot.com',
+    iosBundleId: 'com.example.pasca',
+        databaseURL: 'https://pasca-ios-and-android-dc988-default-rtdb.firebaseio.com/'
+  ));
   runApp(const MyApp());
 }
 
@@ -22,11 +29,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-      ),
-      home:  LoginPage(),
+      theme: ThemeData(),
+      home: const LoginPage(),
     );
   }
 }
