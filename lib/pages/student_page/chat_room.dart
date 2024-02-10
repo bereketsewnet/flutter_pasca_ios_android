@@ -6,11 +6,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
+import 'package:pasca/firebase_service/storage/upload_pdf.dart';
 import 'package:pasca/methods/my_methods/shared_pref_method.dart';
 import 'package:pasca/wediget/chat_messages_list.dart';
 import 'package:pasca/wediget/snack_bar.dart';
 
-import '../../firebase_service/storage/upload_data.dart';
+import '../../firebase_service/storage/upload_image.dart';
 import '../../methods/my_methods/check_internt_status.dart';
 import '../../second_code_test.dart';
 
@@ -211,7 +212,9 @@ class _ChatRoomState extends State<ChatRoom> {
                         ),
                       ),
                       suffixIcon: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          pickFile(context);
+                        },
                         icon: const Icon(
                           Icons.keyboard_voice_outlined,
                           color: CustomColors.thirdColor,
