@@ -1,5 +1,4 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
@@ -29,7 +28,7 @@ class _SubjectUserListState extends State<SubjectUserList> {
     super.initState();
     fetchData();
     startChatUser();
-    checkConnectivity();
+   // checkConnectivity();
   }
 
   void fetchData() async {
@@ -39,6 +38,7 @@ class _SubjectUserListState extends State<SubjectUserList> {
       uid = _uid;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
