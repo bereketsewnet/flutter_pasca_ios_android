@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
 import 'package:pasca/pages/student_page/calendar.dart';
 import 'package:pasca/pages/student_page/general_knwoledge_question.dart';
-import 'package:pasca/pages/student_page/library.dart';
 import 'package:pasca/pages/student_page/student_home_page.dart';
 
 import '../pages/common_page/login_page.dart';
 import '../pages/student_page/law.dart';
+import '../pages/student_page/student_book_collecton.dart';
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({Key? key}) : super(key: key);
@@ -21,7 +21,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   final List<Widget> _pages = [
     const StudentHomePage(),
-    const Library(),
+    const StudentBookCollection(),
     const Question(),
     const Law(),
     const Calendar(),

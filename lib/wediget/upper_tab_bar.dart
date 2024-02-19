@@ -19,6 +19,7 @@ class _UpperTabBarState extends State<UpperTabBar> {
   String uid = '';
   String profilePic = '';
   int unreadCount = 0;
+  bool isMoreOneUnread = false;
   List<Map<dynamic, dynamic>> counterList = [];
 
   @override
@@ -31,8 +32,61 @@ class _UpperTabBarState extends State<UpperTabBar> {
 
   void initializeTabs() {
     myTabs = [
-      Tab(text: 'Private $unreadCount'),
-      const Tab(text: 'Public'),
+      //Tab(text: 'Private $unreadCount'),
+      Tab(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Private',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+            Visibility(
+              visible: isMoreOneUnread,
+              child: const SizedBox(width: 8),
+            ),
+            Visibility(
+              visible: isMoreOneUnread,
+              child: CircleAvatar(
+                radius: 12,
+                backgroundColor: CustomColors.colorFour,
+                child: Text(
+                  unreadCount.toString(),
+                  style: const TextStyle(
+                      fontSize: 12, color: CustomColors.secondaryColor),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+       Tab(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Public',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+            Visibility(
+              visible: isMoreOneUnread,
+              child: const SizedBox(width: 8),
+            ),
+            Visibility(
+              visible: isMoreOneUnread,
+              child: CircleAvatar(
+                radius: 12,
+                backgroundColor: CustomColors.colorFour,
+                child: Text(
+                  unreadCount.toString(),
+                  style: const TextStyle(
+                      fontSize: 12, color: CustomColors.secondaryColor),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     ];
   }
 
@@ -56,54 +110,85 @@ class _UpperTabBarState extends State<UpperTabBar> {
       length: myTabs.length,
       child: Scaffold(
         appBar: AppBar(
-          elevation: 0,
+          backgroundColor: CustomColors.secondaryColor,
+          titleSpacing: 5.0,
+         // elevation: 5,
           leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () {},
             icon: const Icon(
-              Icons.arrow_back,
+              Icons.menu_rounded,
               color: CustomColors.thirdColor,
             ),
           ),
           title: Row(
             children: [
-               CircleAvatar(
+              CircleAvatar(
                 radius: 20,
-                backgroundImage: profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
-                 backgroundColor: Colors.transparent,
+                backgroundImage:
+                    profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
+                backgroundColor: Colors.transparent,
               ),
-              Container(
-                margin: const EdgeInsets.only(left: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                          color: CustomColors.thirdColor, fontSize: 18),
-                    ),
-                    Text(
-                      'Class: $grade',
-                      style: const TextStyle(
-                          color: CustomColors.thirdColor, fontSize: 14),
-                    ),
-                  ],
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          color: CustomColors.thirdColor,
+                          fontSize: 18,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Text(
+                        'Class: $grade',
+                        style: const TextStyle(
+                          color: CustomColors.thirdColor,
+                          fontSize: 12,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
           ),
-          backgroundColor: CustomColors.primaryColor,
-          bottom: TabBar(
-            tabs: myTabs,
-            indicator: const UnderlineTabIndicator(
-              borderSide: BorderSide(
-                width: 3.0,
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.search_rounded,
                 color: CustomColors.thirdColor,
               ),
             ),
-            labelColor: CustomColors.thirdColor,
-            unselectedLabelColor: CustomColors.fourthColor,
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.more_vert_rounded,
+                color: CustomColors.thirdColor,
+              ),
+            ),
+          ],
+          bottom: TabBar(
+            tabs: myTabs,
+            isScrollable: true,
+            indicator: const UnderlineTabIndicator(
+              insets: EdgeInsets.symmetric(horizontal: 5.0),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+              borderSide: BorderSide(
+                width: 5.0,
+                color: CustomColors.colorFour,
+              ),
+            ),
+            dividerColor: Colors.transparent,
+            labelColor: CustomColors.colorFour,
+            unselectedLabelColor: CustomColors.colorFive,
           ),
         ),
         body: const TabBarView(
@@ -132,6 +217,9 @@ class _UpperTabBarState extends State<UpperTabBar> {
 
       setState(() {
         unreadCount = counterListR.length;
+        if (unreadCount > 0) {
+          isMoreOneUnread = true;
+        }
         initializeTabs(); // Update the tabs with the new unread count
         counterList = counterListR;
       });
@@ -148,7 +236,10 @@ class _UpperTabBarState extends State<UpperTabBar> {
           changedMessage['isSeen'] == true) {
         setState(() {
           unreadCount--; // Decrease the count as the message is marked as seen
-          // countUnreadMessage();
+          if (unreadCount > 0) {
+            isMoreOneUnread = true;
+            initializeTabs();
+          }
           initializeTabs();
         });
       }

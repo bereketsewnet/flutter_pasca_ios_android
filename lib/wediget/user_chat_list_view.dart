@@ -17,20 +17,10 @@ class StartchatUserList extends StatelessWidget {
         DateTime.fromMillisecondsSinceEpoch(chatingUsers['timeStamp']);
 
     // Format the DateTime object to a string
-    String formattedTime = DateFormat('h:mm a').format(dateTime);
+    String formattedTime = DateFormat('h:mm a').format(dateTime); // h:mm a d/M/yy/
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: CustomColors.secondaryColor,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            spreadRadius: 3,
-            blurRadius: 25,
-            offset: const Offset(0, 3),
-          ),
-        ],
       ),
       child: InkWell(
         onTap: () {
@@ -44,47 +34,101 @@ class StartchatUserList extends StatelessWidget {
             ),
           );
         },
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundImage: NetworkImage(
-              chatingUsers['profilePic'] ?? '',
-            ),
-            backgroundColor: CustomColors.secondaryColor,
-            radius: 30,
-          ),
-          title: Text(
-            chatingUsers['name'] ?? 'FullName',
-            style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: CustomColors.thirdColor),
-          ),
-          subtitle: Row(
-            children: [
-              const SizedBox(width: 3),
-              Expanded(
-                child: chatingUsers['messageType'] == 'Text'? Text(
-                  chatingUsers['message'],
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: const TextStyle(
-                    color: CustomColors.thirdColor,
-                  ),
-                ): const Text(
-                  'Image',
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: TextStyle(
-                    color: CustomColors.thirdColor,
-                  ),
+        child: Column(
+          children: [
+            ListTile(
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(
+                  chatingUsers['profilePic'] ?? '',
                 ),
+                backgroundColor: CustomColors.secondaryColor,
+                radius: 30,
               ),
-            ],
-          ),
-          trailing: Text(
-            formattedTime,
-            style: const TextStyle(color: CustomColors.thirdColor),
-          ),
+              title: Text(
+                chatingUsers['name'] ?? 'FullName',
+                style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    fontFamily: 'Roboto',
+                    color: CustomColors.thirdColor),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      if(chatingUsers['isSeen'] == true)
+                       const Icon(
+                          Icons.done_all_rounded,
+                          color: CustomColors.colorFour,
+                          size: 18,
+                        )
+                      else
+                       const Icon(
+                          Icons.done_rounded,
+                          color: CustomColors.colorFour,
+                          size: 18,
+                        ),
+
+
+                      if (chatingUsers['messageType'] == 'Text')
+                        Expanded(
+                          child: Text(
+                            chatingUsers['message'],
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              color: CustomColors.colorFive,
+                            ),
+                          ),
+                        )
+                      else
+                        const Text(
+                          'Image',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                            color: CustomColors.colorFour,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+              trailing: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    formattedTime,
+                    style: const TextStyle(color: CustomColors.colorFive),
+                  ),
+                  const SizedBox(height: 8),
+                  const CircleAvatar(
+                    radius: 12,
+                    backgroundColor: CustomColors.colorFour,
+                    child: Padding(
+                      padding: EdgeInsets.all(2.0),
+                      child: Text(
+                        '0',
+                        style: TextStyle(
+                          color: CustomColors.thirdColor,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(left: 70),
+              child: Divider(
+                color: CustomColors.primaryColor,
+                thickness: 2,
+              ),
+            ),
+          ],
         ),
       ),
     );

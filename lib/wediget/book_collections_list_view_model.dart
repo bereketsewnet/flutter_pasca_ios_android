@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../assets/custom_colors/colors.dart';
-import '../pages/common_page/book_collections_each_view.dart';
+import '../pages/common_page/pdf_reader.dart';
 
 class BookCollectionModule extends StatelessWidget {
   BookCollectionModule(this.result, {super.key});

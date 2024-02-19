@@ -30,8 +30,13 @@ class _StudentBookCollectionState extends State<StudentBookCollection> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: CustomColors.primaryColor,
       appBar: AppBar(
-        title: Text('bereket sewnet'),
+        backgroundColor: CustomColors.primaryColor,
+        title: const Text(
+          'Learning Book',
+          style: TextStyle(color: CustomColors.thirdColor),
+        ),
       ),
       body: result.isNotEmpty
           ? ListView.builder(

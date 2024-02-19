@@ -61,7 +61,7 @@ class UsersListView extends StatelessWidget {
               Text(
                 users['type'] ?? 'type',
                 style: const TextStyle(
-                  color: CustomColors.fourthColor,
+                  color: CustomColors.colorFour,
                 ),
               ),
             ],

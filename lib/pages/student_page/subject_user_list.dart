@@ -63,10 +63,10 @@ class _SubjectUserListState extends State<SubjectUserList> {
             ),
           );
         },
-        color: CustomColors.thirdColor,
+        color: CustomColors.colorFour,
         icon: const Icon(
           Icons.edit,
-          color: CustomColors.primaryColor,
+          color: CustomColors.thirdColor,
         ),
       ),
     );
@@ -148,6 +148,7 @@ class _SubjectUserListState extends State<SubjectUserList> {
           'timeStamp': chatingUserList[i]['timeStamp'],
           'friend': friend,
           'messageType' : chatingUserList[i]['messageType'],
+          'isSeen' : chatingUserList[i]['isSeen'],
         };
         chatingUserListFull.add(chatInfo);
       }
@@ -176,6 +177,7 @@ class _SubjectUserListState extends State<SubjectUserList> {
                 'timeStamp': chatingUserListFull[j]['timeStamp'],
                 'friend': chatingUserListFull[j]['friend'],
                 'messageType' : chatingUserListFull[j]['messageType'],
+                'isSeen' : chatingUserListFull[j]['isSeen'],
               };
               tempList.add(temp);
             }

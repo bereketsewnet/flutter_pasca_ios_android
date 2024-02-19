@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -7,16 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
 import 'package:pasca/methods/my_methods/shared_pref_method.dart';
 import 'package:pasca/pages/student_page/law.dart';
-import 'package:pasca/pages/student_page/subject_user_list.dart';
-import 'package:pasca/third_code_test.dart';
 import 'package:pasca/wediget/custom_button.dart';
 
 import 'package:pasca/wediget/normal_button.dart';
 import 'package:pasca/wediget/upper_tab_bar.dart';
 
 import '../../methods/my_methods/check_internt_status.dart';
-import '../../methods/my_methods/lifecycle_observer.dart';
-import '../../wediget/snack_bar.dart';
 
 class StudentHomePage extends StatefulWidget {
   const StudentHomePage({Key? key}) : super(key: key);
@@ -110,8 +104,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
   @override
   Widget build(BuildContext context) {
     // get all width and height of current screen
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: CustomColors.primaryColor,
       extendBodyBehindAppBar: true,
@@ -122,7 +115,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
             SafeArea(
               child: SizedBox(
                 width: double.infinity,
-                height: h / 4,
+                height: size.height / 4,
                 child: Stack(
                   children: [
                     InkWell(
@@ -239,7 +232,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
             ),
             Container(
               margin: const EdgeInsets.all(10),
-              height: h / 4.3,
+              height: size.height / 4.3,
               decoration: BoxDecoration(
                 color: CustomColors.thirdColor,
                 borderRadius: BorderRadius.circular(10),
@@ -305,10 +298,10 @@ class _StudentHomePageState extends State<StudentHomePage> {
                 ],
               ),
             ),
-            SizedBox(height: h / 150),
+            SizedBox(height: size.height / 150),
             SizedBox(
               width: double.infinity,
-              height: h / 3.4,
+              height: size.height / 3.4,
               child: Center(
                 child: Stack(
                   children: [
@@ -338,7 +331,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                                           Text(
                                             item['text'],
                                             style: const TextStyle(
-                                              color: CustomColors.fourthColor,
+                                              color: CustomColors.colorFour,
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold,
                                             ),

@@ -47,7 +47,7 @@ class _ChatRoomState extends State<ChatRoom> {
     _dbRef.onChildAdded.listen((event) {
       // Handle the new child node added
       scrollToBottom();
-    //  _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      //  _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
     checkConnectivity();
   }
@@ -77,6 +77,7 @@ class _ChatRoomState extends State<ChatRoom> {
       backgroundColor: CustomColors.primaryColor,
       appBar: AppBar(
         backgroundColor: CustomColors.secondaryColor,
+        titleSpacing: 5,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -99,11 +100,21 @@ class _ChatRoomState extends State<ChatRoom> {
             Text(
               widget.friendName, // get name from chat list
               style: const TextStyle(
-                color: CustomColors.thirdColor,
-              ),
+                  color: CustomColors.thirdColor,
+                  overflow: TextOverflow.ellipsis,
+                  fontSize: 18),
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.more_vert_rounded,
+              color: CustomColors.thirdColor,
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -198,13 +209,14 @@ class _ChatRoomState extends State<ChatRoom> {
                   child: TextField(
                     controller: _messageController,
                     style: const TextStyle(
-                      color: CustomColors.fourthColor,
+                      color: CustomColors.colorFour,
                     ),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       prefixIcon: IconButton(
-                        onPressed: (){
-                          insetImageGalleryForChat(context, uid, widget.friendId);
+                        onPressed: () {
+                          insetImageGalleryForChat(
+                              context, uid, widget.friendId);
                         },
                         icon: const Icon(
                           Icons.photo_camera_outlined,
@@ -309,7 +321,7 @@ class _ChatRoomState extends State<ChatRoom> {
         'receiver': friendId,
         'timeStamp': ServerValue.timestamp,
         'refkey': messageKey,
-        'messageType' : 'Text',
+        'messageType': 'Text',
       };
       // inserting chat data
       await dbRef.set(chatData).then((_) {

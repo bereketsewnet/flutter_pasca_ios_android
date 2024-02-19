@@ -114,7 +114,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     height: 45,
                     decoration: BoxDecoration(
                       border:
-                          Border.all(color: CustomColors.fourthColor, width: 1),
+                          Border.all(color: CustomColors.colorFour, width: 1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: DropdownButton(
@@ -158,7 +158,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     height: 45,
                     decoration: BoxDecoration(
                       border:
-                          Border.all(color: CustomColors.fourthColor, width: 1),
+                          Border.all(color: CustomColors.colorFour, width: 1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: DropdownButton(

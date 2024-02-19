@@ -36,11 +36,11 @@ class MyTextField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: lableText,
         labelStyle: const TextStyle(
-          color: CustomColors.fourthColor,
+          color: CustomColors.colorFour,
         ),
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(
-            color: CustomColors.fourthColor,
+            color: CustomColors.colorFour,
           ),
           borderRadius: BorderRadius.circular(10),
         ),
@@ -54,7 +54,7 @@ class MyTextField extends StatelessWidget {
         filled: true,
         hintText: hintText,
         hintStyle: TextStyle(
-          color: CustomColors.fourthColor,
+          color: CustomColors.colorFour,
         ),
         prefixIcon: prifixIcon,
         suffixIcon: surfixIcon,
