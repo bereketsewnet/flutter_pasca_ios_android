@@ -1,26 +1,23 @@
+import 'dart:io';
+
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:pasca/assets/custom_colors/colors.dart';
-import 'package:pasca/firebase_service/storage/upload_pdf.dart';
 import 'package:pasca/methods/my_methods/shared_pref_method.dart';
 import 'package:pasca/wediget/chat_messages_list.dart';
 import 'package:pasca/wediget/snack_bar.dart';
 
-import '../../firebase_service/storage/upload_image.dart';
-import '../../methods/my_methods/check_internt_status.dart';
-import '../../second_code_test.dart';
+import '../../wediget/dialog_send_attachment.dart';
 
 class ChatRoom extends StatefulWidget {
-  String friendId;
-  String profileImage;
-  String friendName;
+  final String friendId;
+  final String profileImage;
+  final String friendName;
 
-  ChatRoom({
+  const ChatRoom({
+    super.key,
     required this.friendId,
     required this.profileImage,
     required this.friendName,
@@ -32,10 +29,12 @@ class ChatRoom extends StatefulWidget {
 
 class _ChatRoomState extends State<ChatRoom> {
   final TextEditingController _messageController = TextEditingController();
+  bool _isTextEmpty = true;
   final Query _dbRef = FirebaseDatabase.instance.ref().child('Chats');
   String uid = '';
   List<Map<String, dynamic>> chatMessageList = [];
   final ScrollController _scrollController = ScrollController();
+  bool isEmojiShow = false;
 
   @override
   void initState() {
@@ -49,7 +48,8 @@ class _ChatRoomState extends State<ChatRoom> {
       scrollToBottom();
       //  _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
-    checkConnectivity();
+    //checkConnectivity();
+    _messageController.addListener(_onTextChanged);
   }
 
   void fetchData() async {
@@ -62,11 +62,17 @@ class _ChatRoomState extends State<ChatRoom> {
     });
   }
 
+  void _onTextChanged() {
+    setState(() {
+      _isTextEmpty = _messageController.text.trim().isEmpty;
+    });
+  }
+
   @override
   void dispose() {
-    super.dispose();
     _messageController.dispose();
     _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -182,86 +188,125 @@ class _ChatRoomState extends State<ChatRoom> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 10,
-                    bottom: 20,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                  ),
-                  width: size.width / 1.4,
-                  decoration: BoxDecoration(
+                  width: size.width,
+                  // height: 50,
+                  decoration: const BoxDecoration(
                     color: CustomColors.secondaryColor,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        spreadRadius: 5,
-                        blurRadius: 20,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
                   ),
-                  child: TextField(
-                    controller: _messageController,
-                    style: const TextStyle(
-                      color: CustomColors.colorFour,
-                    ),
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      prefixIcon: IconButton(
-                        onPressed: () {
-                          insetImageGalleryForChat(
-                              context, uid, widget.friendId);
-                        },
-                        icon: const Icon(
-                          Icons.photo_camera_outlined,
-                          color: CustomColors.thirdColor,
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(
+                          left: 8,
+                          right: 4,
+                        ),
+                        child: IconButton(
+                          onPressed: () => setState(() {
+                            isEmojiShow = !isEmojiShow;
+                          }),
+                          icon: const Icon(
+                            Icons.emoji_emotions_outlined,
+                            size: 28,
+                            color: CustomColors.colorFivee,
+                          ),
                         ),
                       ),
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          pickFile(context);
-                        },
-                        icon: const Icon(
-                          Icons.keyboard_voice_outlined,
-                          color: CustomColors.thirdColor,
+                      Expanded(
+                        child: TextField(
+                          controller: _messageController,
+                          keyboardType: TextInputType.multiline,
+                          textInputAction: TextInputAction.newline,
+                          // Add this line
+                          maxLines: null,
+                          // Allow unlimited lines
+                          style: const TextStyle(
+                            color: CustomColors.thirdColor,
+                            fontFamily: 'Roboto',
+                            fontSize: 18,
+                          ),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintStyle: TextStyle(
+                              color: CustomColors.colorFivee,
+                              fontFamily: 'Roboto',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            hintText: 'Message',
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        spreadRadius: 5,
-                        blurRadius: 20,
-                        offset: const Offset(0, 5),
+                      Visibility(
+                        visible: _isTextEmpty,
+                        child: IconButton(
+                          onPressed: () {
+                            showAttachmentOptions(
+                                context, uid, widget.friendId);
+                          },
+                          icon: const Icon(
+                            Icons.attach_file_rounded,
+                            size: 28,
+                            color: CustomColors.colorFivee,
+                          ),
+                        ),
+                      ),
+                      Visibility(
+                        visible: _isTextEmpty,
+                        child: Container(
+                          margin: const EdgeInsets.only(
+                            right: 4,
+                          ),
+                          child: IconButton(
+                            onPressed: () {},
+                            icon: const Icon(
+                              Icons.keyboard_voice_outlined,
+                              size: 28,
+                              color: CustomColors.colorFivee,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Visibility(
+                        visible: !_isTextEmpty,
+                        child: Container(
+                          margin: const EdgeInsets.only(
+                            right: 8,
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              sendMessage();
+                            },
+                            icon: const Icon(
+                              Icons.send_rounded,
+                              size: 28,
+                              color: CustomColors.colorFour,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
-                  ),
-                  child: InkWell(
-                    onTap: sendMessage,
-                    child: const CircleAvatar(
-                      backgroundColor: CustomColors.thirdColor,
-                      radius: 25,
-                      child: Icon(
-                        Icons.send_outlined,
-                        color: CustomColors.secondaryColor,
-                      ),
-                    ),
                   ),
                 ),
               ],
             ),
           ),
+          if (isEmojiShow)
+            SizedBox(
+              height: 256,
+              child: EmojiPicker(
+                textEditingController: _messageController,
+                config: Config(
+                  height: 256,
+                  checkPlatformCompatibility: true,
+                  emojiViewConfig: EmojiViewConfig(
+                    // Issue: https://github.com/flutter/flutter/issues/28894
+                    emojiSizeMax: 28 * (Platform.isIOS ? 1.20 : 1.0),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -348,7 +393,7 @@ class _ChatRoomState extends State<ChatRoom> {
   }
 
   void checkSeenMessage() {
-    DatabaseReference _dbRef = FirebaseDatabase.instance.ref().child('Chats');
+    DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('Chats');
 
     // check all the list sender is my friend and receiver is me the chat update to isSeen ture;
     for (int i = 0; i < chatMessageList.length; i++) {
@@ -356,7 +401,7 @@ class _ChatRoomState extends State<ChatRoom> {
           chatMessageList[i]['receiver'] == uid) {
         String messageKey = chatMessageList[i]['refkey'];
         // update by the getting the key to true
-        _dbRef.child(messageKey).update({'isSeen': true});
+        dbRef.child(messageKey).update({'isSeen': true});
       }
     }
   }

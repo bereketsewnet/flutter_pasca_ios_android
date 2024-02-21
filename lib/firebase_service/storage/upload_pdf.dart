@@ -31,7 +31,7 @@ Future<void> uploadPdf(String fileName, File file, BuildContext context) async {
 }
 
 
-void pickFile(BuildContext context) async {
+void pickPdfFile(BuildContext context) async {
   FilePickerResult? result = await FilePicker.platform.pickFiles(
     type: FileType.custom,
     allowedExtensions: ['pdf'],
